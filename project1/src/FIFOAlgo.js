@@ -1,9 +1,14 @@
 import { useState } from "react";
+import Button from "react-bootstrap/Button"
+import ProgressBar from "react-bootstrap/ProgressBar";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
  
 export default function FIFO() {
     const[queue, setQueue] = useState([]);
+    const [completedQueue, setCompletedQueue] = useState([]);
     const[exe, setExe] = useState(null);
+    const[progress, setProgress] = useState(0)
 
     const addProcess = () => {
         const newProcess = {
@@ -14,34 +19,52 @@ export default function FIFO() {
     };
 
     const exeFIFO = () => {
-       if (queue.length === 0) return;
+       if (queue.length === 0 || exe) return;
        const process = queue[0];
        setExe(process);
+       setProgress(0);
 
-       setTimeout(() => {
-        setExe(null);
-        setQueue(queue.slice(1));
-       }, process.burstTime * 1000)
-    };
+       let count = 0;
+       const interval = setInterval(() => {
+        count += 100;
+        setProgress((count / (process.burstTime * 1000)) * 100);
+
+        if (count >= process.burstTime * 1000) {
+            clearInterval(interval); 
+            setExe(null); 
+            setProgress(0); 
+            setQueue((prevQueue) => prevQueue.slice(1)); 
+
+            setCompletedQueue((prevCompleted) => [...prevCompleted, process]);
+        }
+    }, 100);
+};
 
     return (
         <>
-        <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-            <h2>FIFO Algorithm</h2>
+        <div>
+            <h4>FIFO Algorithm</h4>
         </div>
     
-        <button onClick={addProcess} style={{ marginBottom: "10px", padding: "10px", fontSize: "16px" }}>
+        {exe && (
+                <div style={{ margin: "20px" }}>
+                    <h5>Executing: P{exe.id} (Burst Time: {exe.burstTime}s)</h5>
+                    <ProgressBar now={progress} label={`${Math.round(progress)}%`} animated />
+                </div>
+            )}
+
+        <Button onClick={addProcess} style = {{marginRight: "5px"}}>
             Add Process
-        </button>
-            
-        <button onClick={exeFIFO} style={{ marginBottom: "10px", padding: "10px", fontSize: "16px" }}>
-            {exe ? 'Executing Process {exe.id}' : "FIFO Start"}
-        </button>
+        </Button>
+
+        <Button onClick={exeFIFO}>
+            {exe ? `Executing Process ${exe.id}` : "FIFO Start"}
+        </Button>
         
         <div style = {{marginTop: "20px"}}>
-            <h3>Process Queue: </h3>
+            <h5>Process Queue: </h5>
             {queue.length === 0 ? (
-                <p>No processes in queue</p>
+                <p>Empty queue!</p>
             ) : (
                 <ul>
                     {queue.map((p) => (
@@ -51,6 +74,20 @@ export default function FIFO() {
                     ))}
                 </ul>
             )}
+
+            <h5>Completed Queue:</h5>
+                {completedQueue.length === 0 ? (
+                    <p>What queue?!?</p>
+                ) : (
+                    <ul>
+                        {completedQueue.map((p) => (
+                            <li key={p.id}>
+                                <i className="bi bi-check2-square" style = {{paddingRight: "5px"}}></i> 
+                                P{p.id} (Burst Time: {p.burstTime}s)
+                            </li>
+                        ))}
+                    </ul>
+                )}
         </div>
         </>
     )
