@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button"
 import ProgressBar from "react-bootstrap/ProgressBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import catGif from './catType.gif';
  
 export default function FIFO() {
     const[queue, setQueue] = useState([]);
@@ -47,6 +48,15 @@ export default function FIFO() {
         </div>
     
         <div style={{ margin: "20px" }}>
+                {exe && (
+                    <div style={{ marginBottom: "20px" }}>
+                        <img 
+                            src = {catGif}
+                            style={{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} 
+                        />
+                    </div>
+                )}
+
                 <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
                 <ProgressBar
                     now = {progress}
@@ -100,3 +110,4 @@ export default function FIFO() {
         </>
     )
 }
+
