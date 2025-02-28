@@ -46,19 +46,27 @@ export default function FIFO() {
             <h4>FIFO Algorithm</h4>
         </div>
     
-        {exe && (
-                <div style={{ margin: "20px" }}>
-                    <h5>Executing: P{exe.id} (Burst Time: {exe.burstTime}s)</h5>
-                    <ProgressBar now={progress} label={`${Math.round(progress)}%`} animated />
-                </div>
-            )}
-
+        <div style={{ margin: "20px" }}>
+                <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
+                <ProgressBar
+                    now = {progress}
+                    label = {`${Math.round(progress)}%`}
+                    animated
+                    variant = "success" 
+                    style={{
+                        height: "30px",
+                        borderRadius: "5px", 
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
+                    }}
+                />
+            </div>
+        
         <Button onClick={addProcess} style = {{marginRight: "5px"}}>
             Add Process
         </Button>
 
         <Button onClick={exeFIFO}>
-            {exe ? `Executing Process ${exe.id}` : "FIFO Start"}
+            {exe ? `Executing Process...` : "FIFO Start"}
         </Button>
         
         <div style = {{marginTop: "20px"}}>
