@@ -47,7 +47,7 @@ export default function FIFO() {
             <h4>FIFO Algorithm</h4>
         </div>
     
-        <div style={{ margin: "20px" }}>
+        <div style = {{ margin: "20px" }}>
                 {exe && (
                     <div style={{ marginBottom: "20px" }}>
                         <img 
@@ -71,11 +71,11 @@ export default function FIFO() {
                 />
             </div>
         
-        <Button onClick={addProcess} style = {{marginRight: "5px"}}>
+        <Button onClick = {addProcess} style = {{marginRight: "5px"}}>
             Add Process
         </Button>
 
-        <Button onClick={exeFIFO}>
+        <Button onClick = {exeFIFO} disabled = {queue.length === 0}>
             {exe ? `Executing Process...` : "FIFO Start"}
         </Button>
         

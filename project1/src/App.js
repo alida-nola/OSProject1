@@ -1,6 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import FIFO from './Algo';
+import FIFO from './FIFO';
+import SJF from './SJF';
 
 function App() {
     return (
@@ -8,10 +9,12 @@ function App() {
             <div style = {{paddingBottom: "10px"}}>
                 <h1>CPU Scheduling Algorithms</h1>
                 <h2><i>OS: Project 1, Alida Nola</i></h2>
+                <hr></hr>
             </div>
             
             <div>
                 <FIFO/>
+                <SJF/>
             </div>
         </div>
     ) 
