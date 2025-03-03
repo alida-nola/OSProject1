@@ -114,9 +114,9 @@ export default function SJF() {
                     <thead>
                         <tr>
                             <th>Process ID</th>
-                            <th>Burst Time (ms)</th>
+                            <th>Burst Time (s)</th>
                             <th>Execution Step</th>
-                            <th>Completion Time (ms)</th>
+                            <th>Completion Time (s)</th>
                         </tr>
                     </thead>
                     <tbody>

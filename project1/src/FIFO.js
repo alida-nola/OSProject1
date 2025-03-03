@@ -2,6 +2,8 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+
+import ProgressBar from "react-bootstrap/ProgressBar";
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import catGif from './catType.gif';
@@ -77,60 +79,75 @@ export default function FIFO() {
 
     return (
         <>
-        <div>
-            <h4>FIFO Algorithm</h4>
-        </div>
+            <div>
+                <h4>FIFO Algorithm</h4>
+            </div>
 
-        <div style={{ margin: "20px" }}>
-                {exe && (
-                    <div style={{ marginBottom: "20px" }}>
-                        <img 
-                            src={catGif}
-                            style={{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} 
-                        />
-                    </div>
-                )}
-
-                <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
-                <Bar data={chartData} options={chartOptions} />
+            <div style={{ margin: "20px" }}>
+                    <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
+                    <Bar data={chartData} options={chartOptions} />
             </div>
         
-        <Button onClick = {addProcess} style = {{marginRight: "5px"}}>
-            Add Process
-        </Button>
+            <div style={{ margin: "20px" }}>
+                    {exe && (
+                        <div style={{ marginBottom: "20px" }}>
+                            <img 
+                                src={catGif}
+                                style={{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} 
+                            />
+                        </div>
+                    )}
 
-        <Button onClick = {exeFIFO} disabled = {queue.length === 0}>
-            {exe ? `Executing Process...` : "FIFO Start"}
-        </Button>
-        
-        <div style = {{marginTop: "20px"}}>
-            <h5>Process Queue: </h5>
-            {queue.length === 0 ? (
-                <p>Empty queue!</p>
-            ) : (
-                <ul>
-                    {queue.map((p) => (
-                        <li key = {p.id}>
-                            P{p.id} (Burst Time: {p.burstTime}s)
-                        </li>
-                    ))}
-                </ul>
-            )}
+                    <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
+                    <ProgressBar
+                        now={progress}
+                        label={`${Math.round(progress)}%`}
+                        animated
+                        variant="success" 
+                        style={{
+                            height: "30px",
+                            borderRadius: "5px", 
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
+                        }}
+                    />
+            </div>
 
-            <h5>Completed Queue:</h5>
-                {completedQueue.length === 0 ? (
-                    <p>What queue?!?</p>
+            <Button onClick = {addProcess} style = {{marginRight: "5px"}}>
+                Add Process
+            </Button>
+
+            <Button onClick = {exeFIFO} disabled = {queue.length === 0}>
+                {exe ? `Executing Process...` : "FIFO Start"}
+            </Button>
+            
+            <div style = {{marginTop: "20px"}}>
+                <h5>Process Queue: </h5>
+                {queue.length === 0 ? (
+                    <p>Empty queue!</p>
                 ) : (
                     <ul>
-                        {completedQueue.map((p) => (
-                            <li key={p.id}>
-                                <i className="bi bi-check2-square" style = {{paddingRight: "5px"}}></i> 
+                        {queue.map((p) => (
+                            <li key = {p.id}>
                                 P{p.id} (Burst Time: {p.burstTime}s)
                             </li>
                         ))}
                     </ul>
                 )}
-        </div>
+
+                <h5>Completed Queue:</h5>
+                    {completedQueue.length === 0 ? (
+                        <p>What queue?!?</p>
+                    ) : (
+                        <ul>
+                            {completedQueue.map((p) => (
+                                <li key={p.id}>
+                                    <i className="bi bi-check2-square" style = {{paddingRight: "5px"}}></i> 
+                                    P{p.id} (Burst Time: {p.burstTime}s)
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+            </div>
         </>
     )
 }
