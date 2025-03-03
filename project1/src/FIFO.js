@@ -1,10 +1,12 @@
 import { useState } from "react";
 import Button from "react-bootstrap/Button"
-import ProgressBar from "react-bootstrap/ProgressBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import catGif from './catType.gif';
- 
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
 export default function FIFO() {
     const[queue, setQueue] = useState([]);
     const [completedQueue, setCompletedQueue] = useState([]);
@@ -41,34 +43,47 @@ export default function FIFO() {
     }, 100);
 };
 
+    const chartData = {
+        labels: [exe ? `P${exe.id}` : "Waiting"],
+        datasets: [
+            {
+                label: "Execution Progress",
+                data: [progress],
+                backgroundColor: "#82ca9d",
+                borderColor: "#4caf50",
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const chartOptions = {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+            },
+        },
+    };
+
     return (
         <>
         <div>
             <h4>FIFO Algorithm</h4>
         </div>
-    
-        <div style = {{ margin: "20px" }}>
+
+        <div style={{ margin: "20px" }}>
                 {exe && (
                     <div style={{ marginBottom: "20px" }}>
                         <img 
-                            src = {catGif}
+                            src={catGif}
                             style={{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} 
                         />
                     </div>
                 )}
 
                 <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
-                <ProgressBar
-                    now = {progress}
-                    label = {`${Math.round(progress)}%`}
-                    animated
-                    variant = "success" 
-                    style={{
-                        height: "30px",
-                        borderRadius: "5px", 
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
-                    }}
-                />
+                <Bar data={chartData} options={chartOptions} />
             </div>
         
         <Button onClick = {addProcess} style = {{marginRight: "5px"}}>
