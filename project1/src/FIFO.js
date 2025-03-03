@@ -62,6 +62,15 @@ export default function FIFO() {
             y: {
                 beginAtZero: true,
                 max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value/100;
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Time (seconds)',
+                }
             },
         },
     };
