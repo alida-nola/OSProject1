@@ -2,6 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import FIFO from './FIFO';
 import SJF from './SJF';
+import STCF from './STCF';
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
             <div>
                 <FIFO/>
                 <SJF/>
+                <STCF/>
             </div>
         </div>
     ) 

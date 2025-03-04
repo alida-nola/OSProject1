@@ -80,7 +80,7 @@ export default function FIFO() {
     return (
         <>
             <div>
-                <h4>FIFO Algorithm</h4>
+                <h4>First In First Out (FIFO) Algorithm</h4>
             </div>
 
             <div style={{ margin: "20px" }}>
