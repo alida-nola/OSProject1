@@ -10,8 +10,8 @@ export default function SJF() {
     const[queue, setQueue] = useState([]);
     const [completedQueue, setCompletedQueue] = useState([]);
     const[exe, setExe] = useState(null);
-    const[progress, setProgress] = useState(0)
-    const[run, setRun] = useState(false)
+    const[progress, setProgress] = useState(0);
+    const[run, setRun] = useState(false);
 
     const addProcess = () => {
         setCompletedQueue([]);

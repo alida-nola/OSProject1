@@ -13,7 +13,7 @@ export default function FIFO() {
     const[queue, setQueue] = useState([]);
     const [completedQueue, setCompletedQueue] = useState([]);
     const[exe, setExe] = useState(null);
-    const[progress, setProgress] = useState(0)
+    const[progress, setProgress] = useState(0);
 
     const addProcess = () => {
         const newProcess = {
@@ -84,11 +84,6 @@ export default function FIFO() {
             </div>
 
             <div style={{ margin: "20px" }}>
-                    <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
-                    <Bar data={chartData} options={chartOptions} />
-            </div>
-        
-            <div style={{ margin: "20px" }}>
                     {exe && (
                         <div style={{ marginBottom: "20px" }}>
                             <img 
@@ -100,11 +95,11 @@ export default function FIFO() {
 
                     <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
                     <ProgressBar
-                        now={progress}
-                        label={`${Math.round(progress)}%`}
+                        now = {progress}
+                        label = {`${Math.round(progress)}%`}
                         animated
-                        variant="success" 
-                        style={{
+                        variant = "success" 
+                        style = {{
                             height: "30px",
                             borderRadius: "5px", 
                             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
@@ -112,6 +107,11 @@ export default function FIFO() {
                     />
             </div>
 
+            <div style={{ margin: "20px" }}>
+                    <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
+                    <Bar data={chartData} options = {chartOptions} />
+            </div>
+        
             <Button onClick = {addProcess} style = {{marginRight: "5px"}}>
                 Add Process
             </Button>

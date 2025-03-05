@@ -34,9 +34,8 @@ export default function STCF() {
             return;
         }
 
-        // Sort queue by shortest remaining time
         const sortedQueue = [...queue].sort((a, b) => a.remainingTime - b.remainingTime);
-        const currentProcess = { ...sortedQueue[0] }; // Create a new object to prevent state mutation
+        const currentProcess = { ...sortedQueue[0] }; 
 
         setExe(currentProcess);
         setProgress(0);
