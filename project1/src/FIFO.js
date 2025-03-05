@@ -1,12 +1,13 @@
 import { useState, useEffect} from "react";
-import Button from "react-bootstrap/Button"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-
+import Table from "react-bootstrap/Table";
+import Button from "react-bootstrap/Button"
 import ProgressBar from "react-bootstrap/ProgressBar";
+import catGif from './catType.gif';
+
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import catGif from './catType.gif';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function FIFO({ processes }) {
@@ -41,6 +42,17 @@ export default function FIFO({ processes }) {
         }
     }, 100);
 };
+
+    const renderStatus = (process) => {
+        if (completedQueue.some(p => p.id === process.id)) {
+            return <span className="text-success">Completed</span>;
+        }
+        return <span>In Queue</span>;
+    };
+
+    const getRowClass = (process) => {
+        return completedQueue.some(p => p.id === process.id) ? "table-success" : "";
+    };
 
     const chartData = {
         labels: [exe ? `P${exe.id}` : "Waiting"],
@@ -108,39 +120,32 @@ export default function FIFO({ processes }) {
                 {exe ? `Executing Process...` : "FIFO Start"}
             </Button>
             
-            <div style = {{marginTop: "20px"}}>
-                <h5>Process Queue: </h5>
-                {queue.length === 0 ? (
-                    <p>Empty queue!</p>
-                ) : (
-                    <ul>
-                        {queue.map((p) => (
-                            <li key = {p.id}>
-                                P{p.id} (Burst Time: {p.burstTime}s)
-                            </li>
+            <div style = {{ marginTop: "20px" }}>
+                <h5>Process Queue:</h5>
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            <th>Process ID</th>
+                            <th>Burst Time (s)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {[...queue, ...completedQueue].map((p) => (
+                            <tr key={p.id} className = {getRowClass(p)}>
+                                <td>P{p.id}</td>
+                                <td>{p.burstTime}</td>
+                                <td>{renderStatus(p)}</td>
+                            </tr>
                         ))}
-                    </ul>
-                )}
-
-                <h5>Completed Queue:</h5>
-                    {completedQueue.length === 0 ? (
-                        <p>What queue?!?</p>
-                    ) : (
-                        <ul>
-                            {completedQueue.map((p) => (
-                                <li key={p.id}>
-                                    <i className="bi bi-check2-square" style = {{paddingRight: "5px"}}></i> 
-                                    P{p.id} (Burst Time: {p.burstTime}s)
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                    </tbody>
+                </Table>
+            </div>
 
                 {/* <div style={{ margin: "20px" }}>
                     <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
                     <Bar data={chartData} options = {chartOptions} />
                 </div> */}
-            </div>
         </>
     )
 }
