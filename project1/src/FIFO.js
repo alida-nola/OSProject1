@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import Button from "react-bootstrap/Button"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -9,19 +9,16 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import catGif from './catType.gif';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function FIFO() {
-    const[queue, setQueue] = useState([]);
+export default function FIFO({ processes }) {
+    const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
     const[exe, setExe] = useState(null);
     const[progress, setProgress] = useState(0);
 
-    const addProcess = () => {
-        const newProcess = {
-            id: queue.length + 1,
-            burstTime: Math.floor(Math.random() * 10) + 1,
-        };
-        setQueue([...queue, newProcess]);
-    };
+    useEffect(() => {
+        setQueue(Array.isArray(processes) ? [...processes] : []);
+        setCompletedQueue([]); 
+    }, [processes]);
 
     const exeFIFO = () => {
        if (queue.length === 0 || exe) return;
@@ -83,7 +80,7 @@ export default function FIFO() {
                 <h4>First In First Out (FIFO) Algorithm</h4>
             </div>
 
-            <div style={{ margin: "20px" }}>
+            <div style = {{ margin: "20px" }}>
                     {exe && (
                         <div style={{ marginBottom: "20px" }}>
                             <img 
@@ -106,15 +103,6 @@ export default function FIFO() {
                         }}
                     />
             </div>
-
-            <div style={{ margin: "20px" }}>
-                    <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
-                    <Bar data={chartData} options = {chartOptions} />
-            </div>
-        
-            <Button onClick = {addProcess} style = {{marginRight: "5px"}}>
-                Add Process
-            </Button>
 
             <Button onClick = {exeFIFO} disabled = {queue.length === 0}>
                 {exe ? `Executing Process...` : "FIFO Start"}
@@ -147,6 +135,11 @@ export default function FIFO() {
                             ))}
                         </ul>
                     )}
+
+                {/* <div style={{ margin: "20px" }}>
+                    <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
+                    <Bar data={chartData} options = {chartOptions} />
+                </div> */}
             </div>
         </>
     )

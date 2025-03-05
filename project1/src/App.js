@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Table from "react-bootstrap/Table";
 import FIFO from './FIFO';
 import SJF from './SJF';
 import STCF from './STCF';
@@ -10,8 +11,8 @@ function App() {
     const algo = ["All", "FIFO", "SJF", "STCF"];
 
     const generateProcess = () => {
-        const numProcess = Math.floor(Math.random() * 5) + 3; 
-        const newProcess = Array.from({ length: numProcess }, (_, i) => ({
+        const numProcess = Math.floor(Math.random() * 5) + 3; // Determines the number of processes
+        const newProcess = Array.from({ length: numProcess }, (_, i) => ({ // Determines the burstTime
             id: i + 1,
             arrivalTime: Math.floor(Math.random() * 10), 
             burstTime: Math.floor(Math.random() * 10) + 1, 
@@ -47,15 +48,53 @@ function App() {
                     </select>
                 </div>
 
-                <button className = "btn btn-primary mb-3" onClick = {generateProcess}>
-                    Generate Random Processes
-                </button>
+                {process.length > 0 && (
+                    <div className = "d-flex align-items-center">
+                    <p className = "me-3 mb-0">Generated Processes:</p>
+                    <input 
+                        type = "text" 
+                        className = "form-control w-auto" 
+                        value = {process.length} 
+                        readOnly 
+                    />
+                </div>
+                )}
+
+                <div style = {{paddingTop: "10px"}}>
+                    {process.length > 0 && (
+                        <Table striped bordered hover>
+                            <thead>
+                                <tr>
+                                    <th>Process ID</th>
+                                    <th>Arrival Time (s)</th>
+                                    <th>Burst Time (s)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {process.map((p) => (
+                                    <tr key = {p.id}>
+                                        <td>{p.id}</td>
+                                        <td>{p.arrivalTime}</td>
+                                        <td>{p.burstTime}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    )}
+                </div>
+
+                <div style = {{paddingTop: "5px"}}>
+                    <button className="btn btn-primary mb-3" onClick={generateProcess}>
+                        Generate Random Processes
+                    </button>
+                </div>
                 <hr></hr>
 
-                <div>
+                {/* Passing generated processes to selected algo */}
+                <div> 
                     {selectedAlgo === "All" && (
                         <>
-                            <FIFO processes = {process} />
+                            <FIFO processes = {process} /> 
                             <SJF processes = {process} />
                             <STCF processes = {process} />
                         </>
