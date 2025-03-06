@@ -74,7 +74,7 @@ export default function SJF({ processes }) {
     
     return (
         <div>
-            <h4>Shortest Job First (SJF) Algorithm</h4>
+            <h4><b>Shortest Job First (SJF) Algorithm</b></h4>
             
             <div style = {{ margin: "20px" }}>
                 {exe && (

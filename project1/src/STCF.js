@@ -61,7 +61,7 @@ export default function STCF() {
     return (
         <>
             <div>
-                <h4>Shortest Time-to-Completion First (STCF) Algorithm</h4>
+                <h4><b>Shortest Time-to-Completion First (STCF) Algorithm</b></h4>
             </div>
 
             <div style={{ margin: "20px" }}>

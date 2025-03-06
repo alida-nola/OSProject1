@@ -112,7 +112,7 @@ export default function FIFO({ processes }) {
     return (
         <>
             <div>
-                <h4>First In First Out (FIFO) Algorithm</h4>
+                <h4><b>First In First Out (FIFO) Algorithm</b></h4>
             </div>
 
             <div style = {{ margin: "20px" }}>

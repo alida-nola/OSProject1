@@ -5,11 +5,12 @@ import FIFO from './FIFO';
 import SJF from './SJF';
 import STCF from './STCF';
 import RR from './RR';
+import MLFQ from './MLFQ';
 
 function App() {
     const [selectedAlgo, setSelectedAlgo] = useState("All");
     const [process, setProcess] = useState([]);
-    const algo = ["All", "FIFO", "SJF", "STCF", "RR"];
+    const algo = ["All", "FIFO", "SJF", "STCF", "RR", "MLFQ"];
 
     const generateProcess = () => {
         const numProcess = Math.floor(Math.random() * 5) + 3; // Determines the number of processes
@@ -95,7 +96,7 @@ function App() {
                 <div> 
                     {selectedAlgo === "All" ? (
                      <>
-                        {[FIFO, SJF, STCF, RR].map((Component, index) => (
+                        {[FIFO, SJF, STCF, RR, MLFQ].map((Component, index) => (
                             <div key={index} style={{ 
                                 backgroundColor: "#f8f9fa",
                                 padding: "15px", 
@@ -111,7 +112,8 @@ function App() {
                         {selectedAlgo === "FIFO" && <FIFO processes = {process} />}
                         {selectedAlgo === "SJF" && <SJF processes = {process} />}
                         {selectedAlgo === "STCF" && <STCF processes = {process} />}
-                        {selectedAlgo === "RR" && <STCF processes = {process} />}
+                        {selectedAlgo === "RR" && <RR processes = {process} />}
+                        {selectedAlgo === "MLFQ" && <MLFQ processes = {process} />}
                     </>
                     )}
                 </div>

@@ -71,7 +71,7 @@ export default function RR({ processes }) {
 
     return (
         <div>
-            <h4>Round Robin (RR) Algorithm</h4>
+            <h4><b>Round Robin (RR) Algorithm</b></h4>
 
             <Form>
                 <Form.Group>
