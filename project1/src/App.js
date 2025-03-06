@@ -4,11 +4,12 @@ import Table from "react-bootstrap/Table";
 import FIFO from './FIFO';
 import SJF from './SJF';
 import STCF from './STCF';
+import RR from './RR';
 
 function App() {
     const [selectedAlgo, setSelectedAlgo] = useState("All");
     const [process, setProcess] = useState([]);
-    const algo = ["All", "FIFO", "SJF", "STCF"];
+    const algo = ["All", "FIFO", "SJF", "STCF", "RR"];
 
     const generateProcess = () => {
         const numProcess = Math.floor(Math.random() * 5) + 3; // Determines the number of processes
@@ -94,7 +95,7 @@ function App() {
                 <div> 
                     {selectedAlgo === "All" ? (
                      <>
-                        {[FIFO, SJF, STCF].map((Component, index) => (
+                        {[FIFO, SJF, STCF, RR].map((Component, index) => (
                             <div key={index} style={{ 
                                 backgroundColor: "#f8f9fa",
                                 padding: "15px", 
@@ -107,9 +108,10 @@ function App() {
                     </>
                 ) : (
                     <>
-                        {selectedAlgo === "FIFO" && <FIFO processes={process} />}
-                        {selectedAlgo === "SJF" && <SJF processes={process} />}
-                        {selectedAlgo === "STCF" && <STCF processes={process} />}
+                        {selectedAlgo === "FIFO" && <FIFO processes = {process} />}
+                        {selectedAlgo === "SJF" && <SJF processes = {process} />}
+                        {selectedAlgo === "STCF" && <STCF processes = {process} />}
+                        {selectedAlgo === "RR" && <STCF processes = {process} />}
                     </>
                     )}
                 </div>

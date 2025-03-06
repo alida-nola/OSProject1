@@ -20,7 +20,7 @@ export default function SJF({ processes }) {
         setExecutionOrder([]);
     }, [processes]);
 
-    const executeProcess = async (process) => {
+    const exeProcess = async (process) => {
         return new Promise(resolve => {
             setExe(process);
             setProgress(0);
@@ -46,7 +46,7 @@ export default function SJF({ processes }) {
 
         for (let i = 0; i < sortedQueue.length; i++) {
             const process = sortedQueue[i];
-            await executeProcess(process);
+            await exeProcess(process);
             completionTime += process.burstTime;
 
             setExecutionOrder(prev => [...prev, `Step ${i + 1}`]);  
@@ -63,7 +63,7 @@ export default function SJF({ processes }) {
 
     const renderStatus = (process) => {
         if (completedQueue.some(p => p.id === process.id)) {
-            return <span className="text-success">Completed</span>;
+            return <span className = "text-success">Completed</span>;
         }
         return <span>In Queue</span>;
     };
@@ -76,23 +76,23 @@ export default function SJF({ processes }) {
         <div>
             <h4>Shortest Job First (SJF) Algorithm</h4>
             
-            <div style={{ margin: "20px" }}>
+            <div style = {{ margin: "20px" }}>
                 {exe && (
                     <div style={{ marginBottom: "20px" }}>
                         <img 
-                            src={catGif}
-                            style={{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} 
+                            src = {catGif}
+                            style = {{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} 
                         />
                     </div>
                 )}
 
                 <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
                 <ProgressBar
-                    now={progress}
-                    label={`${Math.round(progress)}%`}
+                    now = {progress}
+                    label = {`${Math.round(progress)}%`}
                     animated
                     variant = "success" 
-                    style={{
+                    style = {{
                         height: "30px",
                         borderRadius: "5px", 
                         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
@@ -104,7 +104,7 @@ export default function SJF({ processes }) {
                 {exe ? `Executing Process...` : "SJF Start"}
             </Button>
 
-            <div style={{ marginTop: "20px" }}>
+            <div style = {{ marginTop: "20px" }}>
                 <h5>Process Queue: </h5>
                 <Table striped bordered hover>
                     <thead>
