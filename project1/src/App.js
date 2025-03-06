@@ -60,7 +60,7 @@ function App() {
                 </div>
                 )}
 
-                <div style = {{paddingTop: "10px"}}>
+                {/* <div style = {{paddingTop: "10px"}}>
                     {process.length > 0 && (
                         <Table striped bordered hover>
                             <thead>
@@ -73,7 +73,7 @@ function App() {
                             <tbody>
                                 {process.map((p) => (
                                     <tr key = {p.id}>
-                                        <td>{p.id}</td>
+                                        <td>P{p.id}</td>
                                         <td>{p.arrivalTime}</td>
                                         <td>{p.burstTime}</td>
                                     </tr>
@@ -81,9 +81,9 @@ function App() {
                             </tbody>
                         </Table>
                     )}
-                </div>
+                </div> */}
 
-                <div style = {{paddingTop: "5px"}}>
+                <div style = {{paddingTop: "10px"}}>
                     <button className="btn btn-primary mb-3" onClick={generateProcess}>
                         Generate Random Processes
                     </button>
