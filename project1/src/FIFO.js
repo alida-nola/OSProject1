@@ -21,27 +21,41 @@ export default function FIFO({ processes }) {
         setCompletedQueue([]); 
     }, [processes]);
 
-    const exeFIFO = () => {
-       if (queue.length === 0 || exe) return;
-       const process = queue[0];
-       setExe(process);
-       setProgress(0);
+    const exeProcess = async (process) => {
+        return new Promise(resolve => {
+            setExe(process);
+            setProgress(0);
+            let progressValue = 0;
+ 
+            const interval = setInterval(() => {
+                progressValue += 10;
+                setProgress(progressValue);
+                
+                if (progressValue >= 100) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, process.burstTime * 100);
+        });
+    };
 
-       let count = 0;
-       const interval = setInterval(() => {
-        count += 100;
-        setProgress((count / (process.burstTime * 1000)) * 100);
-
-        if (count >= process.burstTime * 1000) {
-            clearInterval(interval); 
-            setExe(null); 
-            setProgress(0); 
-            setQueue((prevQueue) => prevQueue.slice(1)); 
-
-            setCompletedQueue((prevCompleted) => [...prevCompleted, process]);
+    const exeFIFO = async () => {
+        if (queue.length === 0 || exe) return;
+    
+        for (let i = 0; i < queue.length; i++) {
+            const process = queue[i];
+            setExe(process);
+            setProgress(0);
+    
+            await exeProcess(process); 
+    
+            setCompletedQueue(prevCompleted => [...prevCompleted, process]);
+            setQueue(prevQueue => prevQueue.slice(1)); 
+    
+            setExe(null);
+            setProgress(0);
         }
-    }, 100);
-};
+    };
 
     const renderStatus = (process) => {
         if (completedQueue.some(p => p.id === process.id)) {
@@ -132,7 +146,7 @@ export default function FIFO({ processes }) {
                     </thead>
                     <tbody>
                         {[...queue, ...completedQueue].map((p) => (
-                            <tr key={p.id} className = {getRowClass(p)}>
+                            <tr key = {p.id} className = {getRowClass(p)}>
                                 <td>P{p.id}</td>
                                 <td>{p.burstTime}</td>
                                 <td>{renderStatus(p)}</td>

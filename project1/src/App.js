@@ -24,7 +24,7 @@ function App() {
         <>
             <div className = "container mt-5">
                 <div style = {{paddingBottom: "10px"}}>
-                    <h1>CPU Scheduling Algorithms</h1>
+                    <h1><b>CPU Scheduling Algorithms</b></h1>
                     <h2><i>OS: Project 1, Alida Nola</i></h2>
                 </div>
 
@@ -84,7 +84,7 @@ function App() {
                 </div> */}
 
                 <div style = {{paddingTop: "10px"}}>
-                    <button className="btn btn-primary mb-3" onClick={generateProcess}>
+                    <button className="btn btn-primary mb-3" onClick = {generateProcess}>
                         Generate Random Processes
                     </button>
                 </div>
