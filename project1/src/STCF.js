@@ -2,67 +2,79 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import Table from "react-bootstrap/Table";
 import catGif from './catType.gif';
 
-export default function STCF() {
-    const [queue, setQueue] = useState([]);
+export default function SJF({ processes }) {
+    const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
     const [exe, setExe] = useState(null);
     const [progress, setProgress] = useState(0);
     const [run, setRun] = useState(false);
-
-    const addProcess = () => {
-        const newProcess = {
-            id: queue.length + 1,
-            burstTime: Math.floor(Math.random() * 10) + 1,
-            remainingTime: Math.floor(Math.random() * 10) + 1,
-        };
-        setQueue((prevQueue) => [...prevQueue, newProcess]);
-    };
+    const [executionOrder, setExecutionOrder] = useState([]);
 
     useEffect(() => {
-        if (run && exe === null && queue.length > 0) {
-            executeSTCF();
+        setQueue(Array.isArray(processes) ? [...processes] : []);
+        setCompletedQueue([]);
+        setExecutionOrder([]);
+    }, [processes]);
+
+    const exeProcess = async (process) => {
+        return new Promise(resolve => {
+            setExe(process);
+            setProgress(0);
+            let progressValue = 0;
+
+            const interval = setInterval(() => {
+                progressValue += 10;
+                setProgress(progressValue);
+
+                if (progressValue >= 100) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, process.burstTime * 100);
+        });
+    };
+
+    const exeSJF = async () => {
+        if (queue.length === 0) return;
+        setRun(true);
+        let sortedQueue = [...queue].sort((a, b) => a.burstTime - b.burstTime);
+        let completionTime = 0;
+
+        for (let i = 0; i < sortedQueue.length; i++) {
+            const process = sortedQueue[i];
+            await exeProcess(process);
+            completionTime += process.burstTime;
+
+            setExecutionOrder(prev => [...prev, `Step ${i + 1}`]);
+            setCompletedQueue(prev => [...prev, { ...process, completionTime }]);
+            setQueue(prevQueue => prevQueue.filter(p => p.id !== process.id));
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
-    }, [run, queue, exe]);
 
-    const executeSTCF = () => {
-        if (queue.length === 0) {
-            setRun(false);
-            setExe(null);
-            return;
-        }
-
-        const sortedQueue = [...queue].sort((a, b) => a.remainingTime - b.remainingTime);
-        const currentProcess = { ...sortedQueue[0] }; 
-
-        setExe(currentProcess);
+        setExe(null);
+        setRun(false);
+        setQueue([]);
         setProgress(0);
+    };
 
-        let remaining = currentProcess.remainingTime;
-        const interval = setInterval(() => {
-            setProgress((prev) => prev + (100 / currentProcess.burstTime));
-            remaining -= 1;
+    const renderStatus = (process) => {
+        if (completedQueue.some(p => p.id === process.id)) {
+            return <span className="text-success">Completed</span>;
+        }
+        return <span>In Queue</span>;
+    };
 
-            if (remaining <= 0) {
-                clearInterval(interval);
-
-                setCompletedQueue((prev) => [...prev, { ...currentProcess }]);
-
-                setQueue((prev) => prev.filter((p) => p.id !== currentProcess.id));
-
-                setExe(null);
-                setProgress(0);
-            }
-        }, 1000);
+    const getRowClass = (process) => {
+        return completedQueue.some(p => p.id === process.id) ? "table-success" : "";
     };
 
     return (
-        <>
-            <div>
-                <h4><b>Shortest Time-to-Completion First (STCF) Algorithm</b></h4>
-            </div>
+        <div>
+            <h4><b>Shortest Job First (SJF) Algorithm</b></h4>
 
             <div style={{ margin: "20px" }}>
                 {exe && (
@@ -88,51 +100,40 @@ export default function STCF() {
                 />
             </div>
 
-            <Button onClick={addProcess} style={{ marginRight: "5px" }}>
-                Add Process
+            <Button onClick={exeSJF} disabled={exe || queue.length === 0 || run}>
+                {exe ? `Executing Process...` : "SJF Start"}
             </Button>
 
-            <Button onClick={() => setRun(true)} disabled={run || queue.length === 0}>
-                {exe ? `Executing Process...` : "STCF Start"}
-            </Button>
-
-            <h5>Process Queue</h5>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Burst Time</th>
-                        <th>Remaining Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {queue.map((process) => (
-                        <tr key={process.id}>
-                            <td>{process.id}</td>
-                            <td>{process.burstTime}</td>
-                            <td>{process.remainingTime}</td>
+            <div style={{ marginTop: "20px" }}>
+                <h5>Process Queue: </h5>
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            <th>Process ID</th>
+                            <th>Burst Time (s)</th>
+                            <th>Execution Step</th>
+                            <th>Completion Time (s)</th>
+                            <th>Status</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {[...queue, ...completedQueue].map((process, index) => {
+                            const isCompleted = completedQueue.some(p => p.id === process.id);
+                            const exeStep = executionOrder[index];
 
-            <h5>Completed Processes</h5>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Burst Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {completedQueue.map((process) => (
-                        <tr key={process.id}>
-                            <td>{process.id}</td>
-                            <td>{process.burstTime}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
-        </>
+                            return (
+                                <tr key={process.id} className={getRowClass(process)}>
+                                    <td>P{process.id}</td>
+                                    <td>{process.burstTime}</td>
+                                    <td>{isCompleted ? exeStep : `-`}</td>
+                                    <td>{isCompleted ? process.completionTime : '-'}</td>
+                                    <td>{renderStatus(process)}</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </Table>
+            </div>
+        </div>
     );
 }

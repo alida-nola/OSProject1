@@ -12,7 +12,6 @@ export default function MLFQ({ processes }) {
     const [exe, setExe] = useState(null);
     const [progress, setProgress] = useState(0);
     const [run, setRun] = useState(false);
-    const [executionOrder, setExecutionOrder] = useState([]);
     const timeSlices = [2, 4, 8]; 
 
     useEffect(() => {
@@ -103,7 +102,6 @@ export default function MLFQ({ processes }) {
                     <thead>
                         <tr>
                             <th>Process ID</th>
-                            <th>Arrival Time</th>
                             <th>Burst Time (s)</th>
                             <th>Priority Level</th>
                             <th>Remaining Time (s)</th>
@@ -118,7 +116,6 @@ export default function MLFQ({ processes }) {
                             return (
                                 <tr key={process.id} className={isCompleted ? "table-success" : ""}>
                                     <td>P{process.id}</td>
-                                    <td>{process.arrivalTime}</td>
                                     <td>{process.burstTime}</td>
                                     <td>{process.priorityLevel}</td>
                                     <td>{process.remaining}</td>
