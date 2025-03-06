@@ -69,15 +69,24 @@ export default function FIFO({ processes }) {
     };
 
     const chartData = {
-        labels: [exe ? `P${exe.id}` : "Waiting"],
+        labels: completedQueue.map(p => `P${p.id}`),
         datasets: [
             {
-                label: "Execution Progress",
-                data: [progress],
+                label: "Burst Time (s)",
+                data: completedQueue.map(p => p.burstTime),
                 backgroundColor: "#82ca9d",
                 borderColor: "#4caf50",
                 borderWidth: 1,
             },
+            {
+                label: "Completion Time (s)",
+                data: completedQueue.map((p, index) => 
+                    completedQueue.slice(0, index + 1).reduce((acc, proc) => acc + proc.burstTime, 0)
+                ),
+                backgroundColor: "#ffa07a",
+                borderColor: "#ff4500",
+                borderWidth: 1,
+            }
         ],
     };
 
@@ -89,7 +98,7 @@ export default function FIFO({ processes }) {
                 max: 100,
                 ticks: {
                     callback: function(value) {
-                        return value/100;
+                        return value;
                     }
                 },
                 title: {
@@ -156,10 +165,12 @@ export default function FIFO({ processes }) {
                 </Table>
             </div>
 
-                {/* <div style={{ margin: "20px" }}>
-                    <h5>{exe ? `Executing: P${exe.id} (Burst Time: ${exe.burstTime}s)` : "Waiting..."}</h5>
-                    <Bar data={chartData} options = {chartOptions} />
-                </div> */}
+            {completedQueue.length > 0 && (
+                <div style={{ margin: "20px" }}>
+                    <h5>Process Execution Chart</h5>
+                    <Bar data={chartData} options={chartOptions} />
+                </div>
+            )}
         </>
     )
 }
