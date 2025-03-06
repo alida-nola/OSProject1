@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Table from "react-bootstrap/Table";
 import FIFO from './FIFO';
 import SJF from './SJF';
 import STCF from './STCF';
@@ -10,16 +9,23 @@ import MLFQ from './MLFQ';
 function App() {
     const [selectedAlgo, setSelectedAlgo] = useState("All");
     const [process, setProcess] = useState([]);
+    const [results, setResults] = useState([]);
     const algo = ["All", "FIFO", "SJF", "STCF", "RR", "MLFQ"];
+    const [run, setRun] = useState(false);
 
     const generateProcess = () => {
-        const numProcess = Math.floor(Math.random() * 5) + 3; // Determines the number of processes
-        const newProcess = Array.from({ length: numProcess }, (_, i) => ({ // Determines the burstTime
+        const numProcess = Math.floor(Math.random() * 5) + 3; // Generates random number of processes
+        const newProcess = Array.from({ length: numProcess }, (_, i) => ({ // Generates random burstTime
             id: i + 1,
             arrivalTime: Math.floor(Math.random() * 10), 
             burstTime: Math.floor(Math.random() * 10) + 1, 
         }));
         setProcess(newProcess);
+        setRun(false);
+    };
+
+    const runAllAlgos = () => {
+        setRun(true);
     };
 
     return (
@@ -59,62 +65,82 @@ function App() {
                         value = {process.length} 
                         readOnly 
                     />
-                </div>
+                    </div>
                 )}
 
-                {/* <div style = {{paddingTop: "10px"}}>
-                    {process.length > 0 && (
-                        <Table striped bordered hover>
-                            <thead>
-                                <tr>
-                                    <th>Process ID</th>
-                                    <th>Arrival Time (s)</th>
-                                    <th>Burst Time (s)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {process.map((p) => (
-                                    <tr key = {p.id}>
-                                        <td>P{p.id}</td>
-                                        <td>{p.arrivalTime}</td>
-                                        <td>{p.burstTime}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    )}
-                </div> */}
-
                 <div style = {{paddingTop: "10px"}}>
-                    <button className="btn btn-primary mb-3" onClick = {generateProcess}>
+                    <button className = "btn btn-primary mb-3" onClick = {generateProcess}>
                         Generate Random Processes
                     </button>
+
+                    <button className = "btn btn-primary ms-2 mb-3" onClick = {runAllAlgos}>
+                        Run All Algorithms
+                    </button>
                 </div>
-                <hr></hr>
 
                 {/* Passing generated processes to selected algo */}
-                <div> 
+                <div>
                     {selectedAlgo === "All" ? (
-                     <>
-                        {[FIFO, SJF, STCF, RR, MLFQ].map((Component, index) => (
-                            <div key={index} style={{ 
-                                backgroundColor: "#f8f9fa",
-                                padding: "15px", 
-                                borderRadius: "10px",
-                                marginBottom: "20px"
-                            }}>
-                                <Component processes={process} />
+                        <>
+                            <div
+                                style={{
+                                    backgroundColor: "#f8f9fa",
+                                    padding: "15px",
+                                    borderRadius: "10px",
+                                    marginBottom: "20px"
+                                }}
+                            >
+                                <FIFO processes={process} run = {run} />
                             </div>
-                        ))}
-                    </>
-                ) : (
-                    <>
-                        {selectedAlgo === "FIFO" && <FIFO processes = {process} />}
-                        {selectedAlgo === "SJF" && <SJF processes = {process} />}
-                        {selectedAlgo === "STCF" && <STCF processes = {process} />}
-                        {selectedAlgo === "RR" && <RR processes = {process} />}
-                        {selectedAlgo === "MLFQ" && <MLFQ processes = {process} />}
-                    </>
+                            <div
+                                style={{
+                                    backgroundColor: "#f8f9fa",
+                                    padding: "15px",
+                                    borderRadius: "10px",
+                                    marginBottom: "20px"
+                                }}
+                            >
+                                <SJF processes={process} run = {run} />
+                            </div>
+                            <div
+                                style={{
+                                    backgroundColor: "#f8f9fa",
+                                    padding: "15px",
+                                    borderRadius: "10px",
+                                    marginBottom: "20px"
+                                }}
+                            >
+                                <STCF processes={process} run = {run} />
+                            </div>
+                            <div
+                                style={{
+                                    backgroundColor: "#f8f9fa",
+                                    padding: "15px",
+                                    borderRadius: "10px",
+                                    marginBottom: "20px"
+                                }}
+                            >
+                                <RR processes={process} run = {run} />
+                            </div>
+                            <div
+                                style={{
+                                    backgroundColor: "#f8f9fa",
+                                    padding: "15px",
+                                    borderRadius: "10px",
+                                    marginBottom: "20px"
+                                }}
+                            >
+                                <MLFQ processes={process} run = {run} />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            {selectedAlgo === "FIFO" && <FIFO processes = {process} run = {run} />}
+                            {selectedAlgo === "SJF" && <SJF processes = {process} run = {run} />}
+                            {selectedAlgo === "STCF" && <STCF processes = {process} run = {run} />}
+                            {selectedAlgo === "RR" && <RR processes = {process} run = {run} />}
+                            {selectedAlgo === "MLFQ" && <MLFQ processes = {process} run = {run} />}
+                        </>
                     )}
                 </div>
             </div>

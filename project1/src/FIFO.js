@@ -10,7 +10,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function FIFO({ processes }) {
+export default function FIFO({ processes, run }) {
     const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
     const[exe, setExe] = useState(null);
@@ -20,6 +20,13 @@ export default function FIFO({ processes }) {
         setQueue(Array.isArray(processes) ? [...processes] : []);
         setCompletedQueue([]); 
     }, [processes]);
+
+    useEffect(() => {
+        if (run) {
+            exeFIFO(); 
+        }
+    }, [run]); 
+
 
     const exeProcess = async (process) => {
         return new Promise(resolve => {
