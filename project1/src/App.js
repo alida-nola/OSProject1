@@ -92,16 +92,26 @@ function App() {
 
                 {/* Passing generated processes to selected algo */}
                 <div> 
-                    {selectedAlgo === "All" && (
-                        <>
-                            <FIFO processes = {process} /> 
-                            <SJF processes = {process} />
-                            <STCF processes = {process} />
-                        </>
+                    {selectedAlgo === "All" ? (
+                     <>
+                        {[FIFO, SJF, STCF].map((Component, index) => (
+                            <div key={index} style={{ 
+                                backgroundColor: "#f8f9fa",
+                                padding: "15px", 
+                                borderRadius: "10px",
+                                marginBottom: "20px"
+                            }}>
+                                <Component processes={process} />
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <>
+                        {selectedAlgo === "FIFO" && <FIFO processes={process} />}
+                        {selectedAlgo === "SJF" && <SJF processes={process} />}
+                        {selectedAlgo === "STCF" && <STCF processes={process} />}
+                    </>
                     )}
-                    {selectedAlgo === "FIFO" && <FIFO processes = {process} />}
-                    {selectedAlgo === "SJF" && <SJF processes = {process} />}
-                    {selectedAlgo === "STCF" && <STCF processes = {process} />}
                 </div>
             </div>
         </>     
