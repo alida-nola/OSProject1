@@ -13,11 +13,13 @@ export default function SJF({ processes }) {
     const [progress, setProgress] = useState(0);
     const [run, setRun] = useState(false);
     const [executionOrder, setExecutionOrder] = useState([]);
+    const [allCompleted, setAllCompleted] = useState(false);
 
     useEffect(() => {
         setQueue(Array.isArray(processes) ? [...processes] : []);
         setCompletedQueue([]);
         setExecutionOrder([]);
+        setAllCompleted(false);
     }, [processes]);
 
     const exeProcess = async (process) => {
@@ -43,22 +45,25 @@ export default function SJF({ processes }) {
         setRun(true);
         let sortedQueue = [...queue].sort((a, b) => a.burstTime - b.burstTime);
         let completionTime = 0;
+        const order = [];
 
         for (let i = 0; i < sortedQueue.length; i++) {
             const process = sortedQueue[i];
             await exeProcess(process);
             completionTime += process.burstTime;
 
-            setExecutionOrder(prev => [...prev, `Step ${i + 1}`]);
             setCompletedQueue(prev => [...prev, { ...process, completionTime }]);
             setQueue(prevQueue => prevQueue.filter(p => p.id !== process.id));
+            order.push(`Step ${i + 1}`);
             await new Promise(resolve => setTimeout(resolve, 100));
         }
 
+        setExecutionOrder(order);
         setExe(null);
         setRun(false);
         setQueue([]);
         setProgress(0);
+        setAllCompleted(true);
     };
 
     const renderStatus = (process) => {
@@ -119,7 +124,7 @@ export default function SJF({ processes }) {
                     <tbody>
                         {[...queue, ...completedQueue].map((process, index) => {
                             const isCompleted = completedQueue.some(p => p.id === process.id);
-                            const exeStep = executionOrder[index];
+                            const exeStep = allCompleted ? executionOrder[completedQueue.findIndex(p => p.id === process.id)] : "Wait...";
 
                             return (
                                 <tr key={process.id} className={getRowClass(process)}>
