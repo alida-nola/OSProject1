@@ -6,12 +6,15 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import Table from "react-bootstrap/Table";
 import catGif from './catType.gif';
 
-export default function SJF({ processes }) {
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+export default function SJF({ processes, run }) {
     const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
     const [exe, setExe] = useState(null);
     const [progress, setProgress] = useState(0);
-    const [run, setRun] = useState(false);
     const [executionOrder, setExecutionOrder] = useState([]);
     const [allCompleted, setAllCompleted] = useState(false);
 
@@ -21,6 +24,12 @@ export default function SJF({ processes }) {
         setExecutionOrder([]);
         setAllCompleted(false);
     }, [processes]);
+
+    useEffect(() => {
+        if (run) {
+            exeSJF(); 
+        }
+    }, [run]); 
 
     const exeProcess = async (process) => {
         return new Promise(resolve => {
@@ -42,7 +51,6 @@ export default function SJF({ processes }) {
 
     const exeSJF = async () => {
         if (queue.length === 0) return;
-        setRun(true);
         let sortedQueue = [...queue].sort((a, b) => a.burstTime - b.burstTime);
         let completionTime = 0;
         const order = [];
@@ -60,7 +68,6 @@ export default function SJF({ processes }) {
 
         setExecutionOrder(order);
         setExe(null);
-        setRun(false);
         setQueue([]);
         setProgress(0);
         setAllCompleted(true);
@@ -75,6 +82,47 @@ export default function SJF({ processes }) {
 
     const getRowClass = (process) => {
         return completedQueue.some(p => p.id === process.id) ? "table-success" : "";
+    };
+
+    const chartData = {
+        labels: completedQueue.map(p => `P${p.id}`),
+        datasets: [
+            {
+                label: "Burst Time (s)",
+                data: completedQueue.map(p => p.burstTime),
+                backgroundColor: "#82ca9d",
+                borderColor: "#4caf50",
+                borderWidth: 1,
+            },
+            {
+                label: "Completion Time (s)",
+                data: completedQueue.map((p, index) => 
+                    completedQueue.slice(0, index + 1).reduce((acc, proc) => acc + proc.burstTime, 0)
+                ),
+                backgroundColor: "#ffa07a",
+                borderColor: "#ff4500",
+                borderWidth: 1,
+            }
+        ],
+    };
+
+    const chartOptions = {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value;
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Time (seconds)',
+                }
+            },
+        },
     };
 
     return (
@@ -105,7 +153,7 @@ export default function SJF({ processes }) {
                 />
             </div>
 
-            <Button onClick={exeSJF} disabled={exe || queue.length === 0 || run}>
+            <Button onClick={exeSJF} disabled={exe || queue.length === 0 }>
                 {exe ? `Executing Process...` : "SJF Start"}
             </Button>
 
@@ -116,8 +164,8 @@ export default function SJF({ processes }) {
                         <tr>
                             <th>Process ID</th>
                             <th>Burst Time (s)</th>
-                            <th>Execution Step</th>
                             <th>Completion Time (s)</th>
+                            <th>Execution Step</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -130,8 +178,8 @@ export default function SJF({ processes }) {
                                 <tr key={process.id} className={getRowClass(process)}>
                                     <td>P{process.id}</td>
                                     <td>{process.burstTime}</td>
-                                    <td>{isCompleted ? exeStep : `-`}</td>
                                     <td>{isCompleted ? process.completionTime : '-'}</td>
+                                    <td>{isCompleted ? exeStep : `-`}</td>
                                     <td>{renderStatus(process)}</td>
                                 </tr>
                             );
@@ -139,6 +187,13 @@ export default function SJF({ processes }) {
                     </tbody>
                 </Table>
             </div>
+
+            {completedQueue.length > 0 && (
+                <div style = {{ margin: "20px" }}>
+                    <h5>Process Execution Chart</h5>
+                    <Bar data = {chartData} options = {chartOptions} />
+                </div>
+            )}
         </div>
     );
 }
