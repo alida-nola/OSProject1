@@ -6,13 +6,12 @@ import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import catGif from "./catType.gif";
 
-export default function RR({ processes }) {
+export default function RR({ processes, run }) {
     const [timeQuantum, setTimeQuantum] = useState(2);
     const [queue, setQueue] = useState([]);
     const [completedQueue, setCompletedQueue] = useState([]);
     const [exe, setExe] = useState(null);
     const [progress, setProgress] = useState(0);
-    const [run, setRun] = useState(false);
 
     useEffect(() => {
         if (Array.isArray(processes) && processes.length > 0) {
@@ -20,6 +19,12 @@ export default function RR({ processes }) {
             setCompletedQueue([]);
         }
     }, [processes]);
+
+    useEffect(() => {
+        if (run) {
+            exeRR(); 
+        }
+    }, [run]); 
 
     const exeProcess = async (process, remainingTime) => {
         return new Promise((resolve) => {
@@ -42,7 +47,6 @@ export default function RR({ processes }) {
 
     const exeRR = async () => {
         if (queue.length === 0) return;
-        setRun(true);
         let time = 0;
         let rrQueue = [...queue];
 
@@ -65,7 +69,6 @@ export default function RR({ processes }) {
         }
 
         setExe(null);
-        setRun(false);
         setProgress(0);
     };
 
@@ -125,7 +128,7 @@ export default function RR({ processes }) {
                         {[...queue, ...completedQueue].map((process, index) => {
                             const isCompleted = completedQueue.some((p) => p.id === process.id);
                             return (
-                                <tr key={process.id} className={isCompleted ? "table-success" : ""}>
+                                <tr key = {process.id} className = {isCompleted ? "table-success" : ""}>
                                     <td>P{process.id}</td>
                                     <td>{process.burstTime}</td>
                                     <td>{isCompleted ? process.completionTime : '-'}</td>

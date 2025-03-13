@@ -6,12 +6,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import catGif from './catType.gif';
 
-export default function MLFQ({ processes }) {
+export default function MLFQ({ processes, run }) {
     const [queues, setQueues] = useState([[], [], []]); 
     const [completedQueue, setCompletedQueue] = useState([]);
     const [exe, setExe] = useState(null);
     const [progress, setProgress] = useState(0);
-    const [run, setRun] = useState(false);
     const timeSlices = [2, 4, 8]; 
 
     useEffect(() => {
@@ -25,8 +24,13 @@ export default function MLFQ({ processes }) {
         }
         setCompletedQueue([]);
     }, [processes]);
-    
 
+    useEffect(() => {
+        if (run) {
+            exeMLFQ(); 
+        }
+    }, [run]); 
+    
     const exeProcess = async (process, queueLevel) => {
         return new Promise(resolve => {
             setExe(process);
@@ -47,7 +51,6 @@ export default function MLFQ({ processes }) {
     };
 
     const exeMLFQ = async () => {
-        setRun(true);
         let currentTime = 0;
         let localQueues = [...queues];
     
@@ -75,7 +78,6 @@ export default function MLFQ({ processes }) {
         }
     
         setExe(null);
-        setRun(false);
         setQueues([[], [], []]);
         setProgress(0);
     };
