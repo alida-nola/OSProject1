@@ -19,17 +19,17 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
     const [progress, setProgress] = useState(0);
     
     useEffect(() => {
+        if (run) {
+            exeSJF(); 
+        }
+    }, [run]); 
+
+    useEffect(() => {
         setQueue(Array.isArray(processes) ? [...processes] : []);
         setCompletedQueue([]); 
         setExecutionOrder([]);
         setAllCompleted(false);
     }, [processes]);
-
-    useEffect(() => {
-        if (run) {
-            exeSJF(); 
-        }
-    }, [run]); 
 
     const exeProcess = async (process) => {
         return new Promise(resolve => {
@@ -51,18 +51,19 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
 
     const exeSJF = async () => {
         if (queue.length === 0) return;
+        // Sorts for shortest burstTime
         let sortedQueue = [...queue].sort((a, b) => a.burstTime - b.burstTime);
         let completionTime = 0;
         const order = [];
 
         for (let i = 0; i < sortedQueue.length; i++) {
             const process = sortedQueue[i];
+
             await exeProcess(process);
             completionTime += process.burstTime;
-
             setCompletedQueue(prev => [...prev, { ...process, completionTime }]);
             setQueue(prevQueue => prevQueue.filter(p => p.id !== process.id));
-            order.push(`Step ${i + 1}`);
+            order.push(`Step ${i + 1}`); // Orders completed processes
             await new Promise(resolve => setTimeout(resolve, 100)); 
         }
 
@@ -167,7 +168,8 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
                     </thead>
                     <tbody>
                         {[...queue, ...completedQueue].map((process) => {
-                            const isCompleted = completedQueue.some(p => p.id === process.id);
+                            const isCompleted = completedQueue.some(p => p.id === process.id); // Checks completion of current process
+                            // Checks for the completion of all processes, then displays execution step
                             const exeStep = allCompleted ? executionOrder[completedQueue.findIndex(p => p.id === process.id)] : "Wait...";
 
                             return (

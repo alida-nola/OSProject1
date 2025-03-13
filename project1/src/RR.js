@@ -11,7 +11,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function RR({ processes, run, onComplete, chartRef }) {
-    const [timeQuantum, setTimeQuantum] = useState(2);
+    const [timeQuantum, setTimeQuantum] = useState(2); // Sets execution time of cycles
     const [queue, setQueue] = useState([]);
     const [completedQueue, setCompletedQueue] = useState([]);
     const [exe, setExe] = useState(null);
@@ -56,19 +56,19 @@ export default function RR({ processes, run, onComplete, chartRef }) {
 
         while (rrQueue.length > 0) {
             const process = rrQueue.shift();
-            const executionTime = Math.min(process.remainingTime, timeQuantum);
+            const executionTime = Math.min(process.remainingTime, timeQuantum); // Time executed within cycle
             await exeProcess(process, executionTime);
-
-            time += executionTime;
-            process.remainingTime -= executionTime;
+            time += executionTime; 
+            process.remainingTime -= executionTime; // Updates remainingTime
 
             if (process.remainingTime > 0) {
-                rrQueue.push(process);
+                rrQueue.push(process);  // Has remaining time cycles again
             } else {
+                // Completed process, adds to completedQueue with competionTime
                 setCompletedQueue((prev) => [...prev, { ...process, completionTime: time }]);
             }
 
-            setQueue([...rrQueue]);
+            setQueue([...rrQueue]); // Updates queue
             await new Promise((resolve) => setTimeout(resolve, 100));
         }
 
@@ -176,6 +176,7 @@ export default function RR({ processes, run, onComplete, chartRef }) {
                     <tbody>
                         {[...queue, ...completedQueue].map((process, index) => {
                             const isCompleted = completedQueue.some((p) => p.id === process.id);
+                            
                             return (
                                 <tr key = {process.id} className = {isCompleted ? "table-success" : ""}>
                                     <td>P{process.id}</td>

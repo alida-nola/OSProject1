@@ -15,7 +15,7 @@ export default function MLFQ({ processes, run, onComplete, chartRef }) {
     const [completedQueue, setCompletedQueue] = useState([]);
     const [exe, setExe] = useState(null);
     const [progress, setProgress] = useState(0);
-    const timeSlices = [2, 4, 8]; 
+    const timeSlices = [2, 4, 8]; // Sets time slices for each priority level
 
     useEffect(() => {
         if (run) {
@@ -64,13 +64,13 @@ export default function MLFQ({ processes, run, onComplete, chartRef }) {
                     let process = localQueues[level][0]; 
 
                     setExe(process);
-                    let execTime = await exeProcess(process, level);
+                    let execTime = await exeProcess(process, level); // Executes process by time slice, derived from priority level
                     process.remaining -= execTime;
                     currentTime += execTime;
-                    process.executionHistory.push({ start: currentTime - execTime, end: currentTime });
+                    process.executionHistory.push({ start: currentTime - execTime, end: currentTime }); // Reflects execution of a cycle
     
                     if (process.remaining > 0) {
-                        let nextLevel = Math.min(level + 1, 2);
+                        let nextLevel = Math.min(level + 1, 2); // Determines priority, does not go beyond level 2
                         process.priorityLevel = nextLevel;
                         localQueues[nextLevel].push(localQueues[level].shift()); // Move process to next queue
                     } else {
@@ -143,9 +143,11 @@ export default function MLFQ({ processes, run, onComplete, chartRef }) {
                 <h5>{exe ? `Executing: P${exe.id} (Remaining Time: ${exe.remaining}s)` : "Waiting..."}</h5>
                 <ProgressBar now={progress} label = {`${Math.round(progress)}%`} animated variant="success" style={{ height: "30px", borderRadius: "5px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }} />
             </div>
+
             <Button onClick = {exeMLFQ} disabled={exe || queues.every(q => q.length === 0)}>
                 {"MLFQ Start"}
             </Button>
+
             <div style={{ marginTop: "20px" }}>
                 <h5>Process Queue: </h5>
                 <Table striped bordered hover>

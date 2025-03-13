@@ -128,7 +128,6 @@ function App() {
                             Export Completed Processes
                         </label>
                     </div>
-                    
                 </div>
                 <hr></hr>
 

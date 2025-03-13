@@ -73,7 +73,7 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
     
         while (remainingQueue.length > 0) {
             remainingQueue.sort((a, b) => a.remainingBurstTime - b.remainingBurstTime); // Shorts queue by shortest remaining time 
-            const nextProcess = remainingQueue[0]; // Holds for next process
+            const nextProcess = remainingQueue[0]; 
     
             await exeProcess(nextProcess);
             completionTime += nextProcess.burstTime;

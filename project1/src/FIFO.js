@@ -68,8 +68,9 @@ export default function FIFO({ processes, run, onComplete, chartRef }) {
             setProgress(0);
         }
 
+        // Indicates to parent of completed processes
         if (onComplete) {
-            onComplete(queue.map(p => p.id)); // Indicates to parent of completed processes
+            onComplete(queue.map(p => p.id)); 
         }
     };
 
