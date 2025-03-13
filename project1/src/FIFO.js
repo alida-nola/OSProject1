@@ -2,9 +2,9 @@ import { useState, useEffect} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button"
+import { Button, Form } from "react-bootstrap";
 import ProgressBar from "react-bootstrap/ProgressBar";
-import catGif from './catType.gif';
+import catGif from './catType.gif'; 
 
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -48,6 +48,7 @@ export default function FIFO({ processes, run }) {
 
     const exeFIFO = async () => {
         if (queue.length === 0 || exe) return;
+        let currentTime = 0;
     
         for (let i = 0; i < queue.length; i++) {
             const process = queue[i];
@@ -55,8 +56,11 @@ export default function FIFO({ processes, run }) {
             setProgress(0);
     
             await exeProcess(process); 
+
+            currentTime += process.burstTime;
+            const completedProcess = { ...process, completionTime: currentTime };
     
-            setCompletedQueue(prevCompleted => [...prevCompleted, process]);
+            setCompletedQueue(prevCompleted => [...prevCompleted, completedProcess]);
             setQueue(prevQueue => prevQueue.slice(1)); 
     
             setExe(null);
@@ -146,10 +150,10 @@ export default function FIFO({ processes, run }) {
                     />
             </div>
 
-            <Button onClick = {exeFIFO} disabled = {queue.length === 0}>
-                {exe ? `Executing Process...` : "FIFO Start"}
+            <Button onClick = {exeFIFO} disabled = {queue.length === 0 || exe}>
+                {"FIFO Start"}
             </Button>
-            
+
             <div style = {{ marginTop: "20px" }}>
                 <h5>Process Queue:</h5>
                 <Table striped bordered hover>
@@ -157,6 +161,7 @@ export default function FIFO({ processes, run }) {
                         <tr>
                             <th>Process ID</th>
                             <th>Burst Time (s)</th>
+                            <th>Completion Time (s)</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -165,6 +170,7 @@ export default function FIFO({ processes, run }) {
                             <tr key = {p.id} className = {getRowClass(p)}>
                                 <td>P{p.id}</td>
                                 <td>{p.burstTime}</td>
+                                <td>{p.completionTime !== undefined ? p.completionTime : "-"}</td>
                                 <td>{renderStatus(p)}</td>
                             </tr>
                         ))}
