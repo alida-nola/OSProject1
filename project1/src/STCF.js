@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef} from "react";
 import Button from "react-bootstrap/Button";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -10,7 +10,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function SJF({ processes, run }) {
+export default function SJF({ processes, run, onComplete, chartRef }) {
     const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
     const [exe, setExe] = useState(null);
@@ -64,6 +64,10 @@ export default function SJF({ processes, run }) {
             setQueue(prevQueue => prevQueue.filter(p => p.id !== process.id));
             order.push(`Step ${i + 1}`);
             await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        if (onComplete) {
+            onComplete(queue.map(p => p.id)); 
         }
 
         setExecutionOrder(order);
@@ -180,7 +184,7 @@ export default function SJF({ processes, run }) {
             </div>
 
             {completedQueue.length > 0 && (
-                <div style = {{ margin: "20px" }}>
+                <div ref={chartRef} style = {{ margin: "20px" }}>
                     <h5>Process Execution Chart</h5>
                     <Bar data = {chartData} options = {chartOptions} />
                 </div>

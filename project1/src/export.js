@@ -18,7 +18,7 @@ export const exportToPDF = async (completedProcesses, allProcesses, chartRefs) =
             }
 
             doc.setFontSize(16);
-            doc.text(`${key} Scheduling Results`, 14, yOffset); 
+            doc.text(`${key}`, 14, yOffset); 
             yOffset += 5; 
 
             const tableColumn = ["Process ID", "Arrival Time", "Burst Time"];

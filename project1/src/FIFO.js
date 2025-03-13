@@ -78,7 +78,6 @@ export default function FIFO({ processes, run, onComplete, chartRef }) {
         return completedQueue.some(p => p.id === process.id) ? "table-success" : "";
     };
 
-    const localChartRef = useRef(null);
     const chartData = {
         labels: completedQueue.map(p => `P${p.id}`),
         datasets: [
