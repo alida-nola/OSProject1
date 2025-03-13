@@ -107,7 +107,7 @@ export default function RR({ processes }) {
             </div>
 
             <Button onClick = {exeRR} disabled = {exe || queue.length === 0}>
-                {exe ? `Executing Process...` : "Start RR"}
+                {"Start RR"}
             </Button>
 
             <div style = {{ marginTop: "20px" }}>
@@ -117,8 +117,8 @@ export default function RR({ processes }) {
                         <tr>
                             <th>Process ID</th>
                             <th>Burst Time (s)</th>
-                            <th>Remaining Time (s)</th>
                             <th>Completion Time (s)</th>
+                            <th>Remaining Time (s)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -128,8 +128,9 @@ export default function RR({ processes }) {
                                 <tr key={process.id} className={isCompleted ? "table-success" : ""}>
                                     <td>P{process.id}</td>
                                     <td>{process.burstTime}</td>
-                                    <td>{isCompleted ? 0 : process.remainingTime}</td>
                                     <td>{isCompleted ? process.completionTime : '-'}</td>
+                                    <td>{isCompleted ? 0 : process.remainingTime}</td>
+                                    
                                 </tr>
                             );
                         })}

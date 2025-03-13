@@ -83,18 +83,18 @@ export default function MLFQ({ processes }) {
     
     return (
         <div>
-            <h4><b>Multilevel Feedback Queue (MLFQ) Scheduling</b></h4>
-            <div style={{ margin: "20px" }}>
+            <h4><b>Multilevel Feedback Queue (MLFQ) Algorithm</b></h4>
+            <div style = {{ margin: "20px" }}>
                 {exe && (
-                    <div style={{ marginBottom: "20px" }}>
-                        <img src={catGif} style={{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} />
+                    <div style = {{ marginBottom: "20px" }}>
+                        <img src = {catGif} style = {{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} />
                     </div>
                 )}
                 <h5>{exe ? `Executing: P${exe.id} (Remaining Time: ${exe.remaining}s)` : "Waiting..."}</h5>
-                <ProgressBar now={progress} label={`${Math.round(progress)}%`} animated variant="success" style={{ height: "30px", borderRadius: "5px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }} />
+                <ProgressBar now={progress} label = {`${Math.round(progress)}%`} animated variant="success" style={{ height: "30px", borderRadius: "5px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }} />
             </div>
-            <Button onClick={exeMLFQ} disabled={exe || queues.every(q => q.length === 0)}>
-                {exe ? `Executing Process...` : "MLFQ Start"}
+            <Button onClick = {exeMLFQ} disabled={exe || queues.every(q => q.length === 0)}>
+                {"MLFQ Start"}
             </Button>
             <div style={{ marginTop: "20px" }}>
                 <h5>Process Queue: </h5>
@@ -103,10 +103,11 @@ export default function MLFQ({ processes }) {
                         <tr>
                             <th>Process ID</th>
                             <th>Burst Time (s)</th>
+                            <th>Completion Time (s)</th>
                             <th>Priority Level</th>
                             <th>Remaining Time (s)</th>
                             <th>Execution History</th>
-                            <th>Completion Time (s)</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -114,14 +115,14 @@ export default function MLFQ({ processes }) {
                             const isCompleted = completedQueue.some(p => p.id === process.id);
 
                             return (
-                                <tr key={process.id} className={isCompleted ? "table-success" : ""}>
+                                <tr key = {process.id} className = {isCompleted ? "table-success" : ""}>
                                     <td>P{process.id}</td>
                                     <td>{process.burstTime}</td>
+                                    <td>{isCompleted ? process.completionTime : '-'}</td>
                                     <td>{process.priorityLevel}</td>
                                     <td>{process.remaining}</td>
                                     <td>{process.executionHistory.length > 0 ? 
                                         process.executionHistory.map(e => `[${e.start}-${e.end}]`).join(", ") : '-'} </td>
-                                    <td>{isCompleted ? process.completionTime : '-'}</td>
                                 </tr>
                             );
                         })}

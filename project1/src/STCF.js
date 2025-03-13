@@ -73,13 +73,6 @@ export default function SJF({ processes, run }) {
         setAllCompleted(true);
     };
 
-    const renderStatus = (process) => {
-        if (completedQueue.some(p => p.id === process.id)) {
-            return <span className="text-success">Completed</span>;
-        }
-        return <span>In Queue</span>;
-    };
-
     const getRowClass = (process) => {
         return completedQueue.some(p => p.id === process.id) ? "table-success" : "";
     };
@@ -154,7 +147,7 @@ export default function SJF({ processes, run }) {
             </div>
 
             <Button onClick={exeSJF} disabled={exe || queue.length === 0 }>
-                {exe ? `Executing Process...` : "SJF Start"}
+                {"SJF Start"}
             </Button>
 
             <div style={{ marginTop: "20px" }}>
@@ -166,7 +159,6 @@ export default function SJF({ processes, run }) {
                             <th>Burst Time (s)</th>
                             <th>Completion Time (s)</th>
                             <th>Execution Step</th>
-                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -180,7 +172,6 @@ export default function SJF({ processes, run }) {
                                     <td>{process.burstTime}</td>
                                     <td>{isCompleted ? process.completionTime : '-'}</td>
                                     <td>{isCompleted ? exeStep : `-`}</td>
-                                    <td>{renderStatus(process)}</td>
                                 </tr>
                             );
                         })}

@@ -2,7 +2,7 @@ import { useState, useEffect} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Table from "react-bootstrap/Table";
-import { Button, Form } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import catGif from './catType.gif'; 
 
@@ -65,13 +65,6 @@ export default function FIFO({ processes, run }) {
             setExe(null);
             setProgress(0);
         }
-    };
-
-    const renderStatus = (process) => {
-        if (completedQueue.some(p => p.id === process.id)) {
-            return <span className="text-success">Completed</span>;
-        }
-        return <span>In Queue</span>;
     };
 
     const getRowClass = (process) => {
@@ -161,7 +154,6 @@ export default function FIFO({ processes, run }) {
                             <th>Process ID</th>
                             <th>Burst Time (s)</th>
                             <th>Completion Time (s)</th>
-                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -170,7 +162,6 @@ export default function FIFO({ processes, run }) {
                                 <td>P{p.id}</td>
                                 <td>{p.burstTime}</td>
                                 <td>{p.completionTime !== undefined ? p.completionTime : "-"}</td>
-                                <td>{renderStatus(p)}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -178,9 +169,9 @@ export default function FIFO({ processes, run }) {
             </div>
 
             {completedQueue.length > 0 && (
-                <div style={{ margin: "20px" }}>
+                <div style = {{ margin: "20px" }}>
                     <h5>Process Execution Chart</h5>
-                    <Bar data={chartData} options={chartOptions} />
+                    <Bar data = {chartData} options = {chartOptions} />
                 </div>
             )}
         </>

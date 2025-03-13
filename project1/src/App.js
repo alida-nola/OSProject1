@@ -76,6 +76,7 @@ function App() {
                         Run All Algorithms
                     </button>
                 </div>
+                <hr></hr>
 
                 {/* Passing generated processes to selected algo */}
                 <div>
