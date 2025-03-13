@@ -10,7 +10,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function MLFQ({ processes, run }) {
+export default function MLFQ({ processes, run, onComplete, chartRef }) {
     const [queues, setQueues] = useState([[], [], []]); 
     const [completedQueue, setCompletedQueue] = useState([]);
     const [exe, setExe] = useState(null);
@@ -35,8 +35,6 @@ export default function MLFQ({ processes, run }) {
         setCompletedQueue([]);
     }, [processes]);
 
-
-    
     const exeProcess = async (process, queueLevel) => {
         return new Promise(resolve => {
             setExe(process);
@@ -82,12 +80,56 @@ export default function MLFQ({ processes, run }) {
                 }
             }
         }
+
+        if (onComplete) {
+            onComplete(queues.map(p => p.id)); 
+        }
     
         setExe(null);
         setQueues([[], [], []]);
         setProgress(0);
     };
     
+    const chartData = {
+        labels: completedQueue.map(p => `P${p.id}`),
+        datasets: [
+            {
+                label: "Burst Time (s)",
+                data: completedQueue.map(p => p.burstTime),
+                backgroundColor: "#82ca9d",
+                borderColor: "#4caf50",
+                borderWidth: 1,
+            },
+            {
+                label: "Completion Time (s)",
+                data: completedQueue.map((p, index) => 
+                    completedQueue.slice(0, index + 1).reduce((acc, proc) => acc + proc.burstTime, 0)
+                ),
+                backgroundColor: "#ffa07a",
+                borderColor: "#ff4500",
+                borderWidth: 1,
+            }
+        ],
+    };
+
+    const chartOptions = {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value;
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Time (seconds)',
+                }
+            },
+        },
+    };
     
     return (
         <div>
@@ -137,6 +179,13 @@ export default function MLFQ({ processes, run }) {
                     </tbody>
                 </Table>
             </div>
+
+            {completedQueue.length > 0 && (
+                <div ref = {chartRef} style = {{ margin: "20px" }}>
+                    <h5>Process Execution Chart</h5>
+                    <Bar data = {chartData} options = {chartOptions} />
+                </div>
+            )}
         </div>
     );
 }
