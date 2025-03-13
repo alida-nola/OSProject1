@@ -1,4 +1,4 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Table from "react-bootstrap/Table";
@@ -10,7 +10,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function FIFO({ processes, run }) {
+export default function FIFO({ processes, run, onComplete, chartRef }) {
     const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
     const[exe, setExe] = useState(null);
@@ -68,12 +68,17 @@ export default function FIFO({ processes, run }) {
             setExe(null);
             setProgress(0);
         }
+
+        if (onComplete) {
+            onComplete(queue.map(p => p.id)); // Indicates to parent of completed processes
+        }
     };
 
     const getRowClass = (process) => {
         return completedQueue.some(p => p.id === process.id) ? "table-success" : "";
     };
 
+    const localChartRef = useRef(null);
     const chartData = {
         labels: completedQueue.map(p => `P${p.id}`),
         datasets: [
@@ -172,7 +177,7 @@ export default function FIFO({ processes, run }) {
             </div>
 
             {completedQueue.length > 0 && (
-                <div style = {{ margin: "20px" }}>
+                <div ref = {chartRef} style = {{ margin: "20px" }}>
                     <h5>Process Execution Chart</h5>
                     <Bar data = {chartData} options = {chartOptions} />
                 </div>
