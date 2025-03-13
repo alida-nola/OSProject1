@@ -27,7 +27,6 @@ export default function FIFO({ processes, run }) {
         }
     }, [run]); 
 
-
     const exeProcess = async (process) => {
         return new Promise(resolve => {
             setExe(process);

@@ -6,19 +6,26 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import Table from "react-bootstrap/Table";
 import catGif from './catType.gif';
 
-export default function SJF({ processes }) {
+export default function SJF({ processes, run }) {
     const[queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
     const[exe, setExe] = useState(null);
     const[progress, setProgress] = useState(0);
-    const[run, setRun] = useState(false);
     const [executionOrder, setExecutionOrder] = useState([]);
+    const [allCompleted, setAllCompleted] = useState(false);
 
     useEffect(() => {
         setQueue(Array.isArray(processes) ? [...processes] : []);
         setCompletedQueue([]); 
         setExecutionOrder([]);
+        setAllCompleted(false);
     }, [processes]);
+
+    useEffect(() => {
+        if (run) {
+            exeSJF(); 
+        }
+    }, [run]); 
 
     const exeProcess = async (process) => {
         return new Promise(resolve => {
@@ -40,25 +47,26 @@ export default function SJF({ processes }) {
 
     const exeSJF = async () => {
         if (queue.length === 0) return;
-        setRun(true);
         let sortedQueue = [...queue].sort((a, b) => a.burstTime - b.burstTime);
         let completionTime = 0;
+        const order = [];
 
         for (let i = 0; i < sortedQueue.length; i++) {
             const process = sortedQueue[i];
             await exeProcess(process);
             completionTime += process.burstTime;
 
-            setExecutionOrder(prev => [...prev, `Step ${i + 1}`]);  
             setCompletedQueue(prev => [...prev, { ...process, completionTime }]);
             setQueue(prevQueue => prevQueue.filter(p => p.id !== process.id));
+            order.push(`Step ${i + 1}`);
             await new Promise(resolve => setTimeout(resolve, 100)); 
         }
 
+        setExecutionOrder(order);
         setExe(null);
-        setRun(false);
         setQueue([]);  
         setProgress(0);
+        setAllCompleted(true);
     };
 
     const renderStatus = (process) => {
@@ -100,8 +108,8 @@ export default function SJF({ processes }) {
                 />
             </div>
             
-            <Button onClick = {exeSJF} disabled = {exe || queue.length === 0}>
-                {exe ? `Executing Process...` : "SJF Start"}
+            <Button onClick = {exeSJF} disabled = {queue.length === 0 || exe}>
+                {"SJF Start"}
             </Button>
 
             <div style = {{ marginTop: "20px" }}>
@@ -119,7 +127,7 @@ export default function SJF({ processes }) {
                     <tbody>
                         {[...queue, ...completedQueue].map((process, index) => {
                             const isCompleted = completedQueue.some(p => p.id === process.id);
-                            const exeStep = executionOrder[index];
+                            const exeStep = allCompleted ? executionOrder[completedQueue.findIndex(p => p.id === process.id)] : "Wait...";
 
                             return (
                                 <tr key={process.id} className={getRowClass(process)}>
