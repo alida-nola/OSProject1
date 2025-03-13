@@ -14,18 +14,21 @@ export default function FIFO({ processes, run }) {
     const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
     const[exe, setExe] = useState(null);
-    const[progress, setProgress] = useState(0);
+    const[progress, setProgress] = useState(0); // State of progress bar
 
-    useEffect(() => {
-        setQueue(Array.isArray(processes) ? [...processes] : []);
-        setCompletedQueue([]); 
-    }, [processes]);
-
+    // Allows 'Run All Algorithms'
     useEffect(() => {
         if (run) {
             exeFIFO(); 
         }
     }, [run]); 
+
+    // Resets queue for new processes
+    // Syncs queue and processes
+    useEffect(() => {
+        setQueue(Array.isArray(processes) ? [...processes] : []);
+        setCompletedQueue([]); 
+    }, [processes]);
 
     const exeProcess = async (process) => {
         return new Promise(resolve => {

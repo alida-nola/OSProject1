@@ -6,12 +6,22 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import catGif from './catType.gif';
 
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
 export default function MLFQ({ processes, run }) {
     const [queues, setQueues] = useState([[], [], []]); 
     const [completedQueue, setCompletedQueue] = useState([]);
     const [exe, setExe] = useState(null);
     const [progress, setProgress] = useState(0);
     const timeSlices = [2, 4, 8]; 
+
+    useEffect(() => {
+        if (run) {
+            exeMLFQ(); 
+        }
+    }, [run]); 
 
     useEffect(() => {
         if (Array.isArray(processes)) {
@@ -25,11 +35,7 @@ export default function MLFQ({ processes, run }) {
         setCompletedQueue([]);
     }, [processes]);
 
-    useEffect(() => {
-        if (run) {
-            exeMLFQ(); 
-        }
-    }, [run]); 
+
     
     const exeProcess = async (process, queueLevel) => {
         return new Promise(resolve => {

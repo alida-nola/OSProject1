@@ -19,17 +19,17 @@ export default function SJF({ processes, run }) {
     const [allCompleted, setAllCompleted] = useState(false);
 
     useEffect(() => {
+        if (run) {
+            exeSJF(); 
+        }
+    }, [run]); 
+
+    useEffect(() => {
         setQueue(Array.isArray(processes) ? [...processes] : []);
         setCompletedQueue([]);
         setExecutionOrder([]);
         setAllCompleted(false);
     }, [processes]);
-
-    useEffect(() => {
-        if (run) {
-            exeSJF(); 
-        }
-    }, [run]); 
 
     const exeProcess = async (process) => {
         return new Promise(resolve => {
@@ -167,7 +167,7 @@ export default function SJF({ processes, run }) {
                             const exeStep = allCompleted ? executionOrder[completedQueue.findIndex(p => p.id === process.id)] : "Wait...";
 
                             return (
-                                <tr key={process.id} className={getRowClass(process)}>
+                                <tr key = {process.id} className = {getRowClass(process)}>
                                     <td>P{process.id}</td>
                                     <td>{process.burstTime}</td>
                                     <td>{isCompleted ? process.completionTime : '-'}</td>

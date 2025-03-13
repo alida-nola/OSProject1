@@ -6,6 +6,10 @@ import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import catGif from "./catType.gif";
 
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
 export default function RR({ processes, run }) {
     const [timeQuantum, setTimeQuantum] = useState(2);
     const [queue, setQueue] = useState([]);
@@ -14,17 +18,17 @@ export default function RR({ processes, run }) {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
+        if (run) {
+            exeRR(); 
+        }
+    }, [run]); 
+
+    useEffect(() => {
         if (Array.isArray(processes) && processes.length > 0) {
             setQueue(processes.map((p) => ({ ...p, remainingTime: p.burstTime })));
             setCompletedQueue([]);
         }
     }, [processes]);
-
-    useEffect(() => {
-        if (run) {
-            exeRR(); 
-        }
-    }, [run]); 
 
     const exeProcess = async (process, remainingTime) => {
         return new Promise((resolve) => {

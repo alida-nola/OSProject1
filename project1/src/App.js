@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Form } from "react-bootstrap";
 import FIFO from './FIFO';
 import SJF from './SJF';
 import STCF from './STCF';
@@ -8,9 +9,9 @@ import MLFQ from './MLFQ';
 
 function App() {
     const [selectedAlgo, setSelectedAlgo] = useState("All");
-    const [process, setProcess] = useState([]);
     const algo = ["All", "FIFO", "SJF", "STCF", "RR", "MLFQ"];
-    const [run, setRun] = useState(false);
+    const [process, setProcess] = useState([]); // Stores list of randomly generated processes
+    const [run, setRun] = useState(false); // Trigger to run algorithm(s)
 
     const generateProcess = () => {
         const numProcess = Math.floor(Math.random() * 5) + 3; // Generates random number of processes
@@ -19,6 +20,7 @@ function App() {
             arrivalTime: Math.floor(Math.random() * 10), 
             burstTime: Math.floor(Math.random() * 10) + 1, 
         }));
+        
         setProcess(newProcess);
         setRun(false);
     };
