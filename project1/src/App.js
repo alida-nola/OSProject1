@@ -9,7 +9,6 @@ import MLFQ from './MLFQ';
 function App() {
     const [selectedAlgo, setSelectedAlgo] = useState("All");
     const [process, setProcess] = useState([]);
-    const [results, setResults] = useState([]);
     const algo = ["All", "FIFO", "SJF", "STCF", "RR", "MLFQ"];
     const [run, setRun] = useState(false);
 
@@ -73,7 +72,7 @@ function App() {
                         Generate Random Processes
                     </button>
 
-                    <button className = "btn btn-primary ms-2 mb-3" onClick = {runAllAlgos}>
+                    <button className = "btn btn-primary ms-2 mb-3" onClick = {runAllAlgos} disabled = {selectedAlgo !== "All"}>
                         Run All Algorithms
                     </button>
                 </div>
@@ -90,7 +89,7 @@ function App() {
                                     marginBottom: "20px"
                                 }}
                             >
-                                <FIFO processes={process} run = {run} />
+                                <FIFO processes = {process} run = {run} />
                             </div>
                             <div
                                 style={{
@@ -100,7 +99,7 @@ function App() {
                                     marginBottom: "20px"
                                 }}
                             >
-                                <SJF processes={process} run = {run} />
+                                <SJF processes = {process} run = {run} />
                             </div>
                             <div
                                 style={{
@@ -110,7 +109,7 @@ function App() {
                                     marginBottom: "20px"
                                 }}
                             >
-                                <STCF processes={process} run = {run} />
+                                <STCF processes = {process} run = {run} />
                             </div>
                             <div
                                 style={{
@@ -120,7 +119,7 @@ function App() {
                                     marginBottom: "20px"
                                 }}
                             >
-                                <RR processes={process} run = {run} />
+                                <RR processes = {process} run = {run} />
                             </div>
                             <div
                                 style={{
@@ -130,7 +129,7 @@ function App() {
                                     marginBottom: "20px"
                                 }}
                             >
-                                <MLFQ processes={process} run = {run} />
+                                <MLFQ processes = {process} run = {run} />
                             </div>
                         </>
                     ) : (
