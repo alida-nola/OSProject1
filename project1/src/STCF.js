@@ -13,10 +13,10 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default function SJF({ processes, run, onComplete, chartRef }) {
     const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
-    const [exe, setExe] = useState(null);
-    const [progress, setProgress] = useState(0);
-    const [executionOrder, setExecutionOrder] = useState([]);
     const [allCompleted, setAllCompleted] = useState(false);
+    const [exe, setExe] = useState(null);
+    const [executionOrder, setExecutionOrder] = useState([]);
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         if (run) {
@@ -33,46 +33,64 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
 
     const exeProcess = async (process) => {
         return new Promise(resolve => {
-            setExe(process);
+            setExe(process); 
             setProgress(0);
             let progressValue = 0;
-
+    
             const interval = setInterval(() => {
                 progressValue += 10;
                 setProgress(progressValue);
-
+    
+                // Check for preemption while executing
+                if (queue.length > 0) {
+                    // Finds the process with the shortest remaining burst time
+                    const shortestJob = queue.reduce((prev, current) => 
+                        (prev.remainingBurstTime < current.remainingBurstTime ? prev : current)
+                    );
+    
+                    // Allows interuption of a current process
+                    if (shortestJob.remainingBurstTime < process.remainingBurstTime) {
+                        clearInterval(interval);
+                        resolve();
+                        return;
+                    }
+                }
+    
                 if (progressValue >= 100) {
                     clearInterval(interval);
                     resolve();
                 }
-            }, process.burstTime * 100);
+            }, (process.remainingBurstTime / 10) * 100); 
         });
     };
-
+    
     const exeSJF = async () => {
         if (queue.length === 0) return;
-        let sortedQueue = [...queue].sort((a, b) => a.burstTime - b.burstTime);
+    
+        let remainingQueue = [...queue];  
         let completionTime = 0;
         const order = [];
-
-        for (let i = 0; i < sortedQueue.length; i++) {
-            const process = sortedQueue[i];
-            await exeProcess(process);
-            completionTime += process.burstTime;
-
-            setCompletedQueue(prev => [...prev, { ...process, completionTime }]);
-            setQueue(prevQueue => prevQueue.filter(p => p.id !== process.id));
-            order.push(`Step ${i + 1}`);
-            await new Promise(resolve => setTimeout(resolve, 100));
+    
+        while (remainingQueue.length > 0) {
+            remainingQueue.sort((a, b) => a.remainingBurstTime - b.remainingBurstTime); // Shorts queue by shortest remaining time 
+            const nextProcess = remainingQueue[0]; // Holds for next process
+    
+            await exeProcess(nextProcess);
+            completionTime += nextProcess.burstTime;
+            order.push(`Step ${order.length + 1}`); // Orders completed processes
+            setCompletedQueue(prev => [...prev, { ...nextProcess, completionTime }]);
+            remainingQueue = remainingQueue.filter(p => p.id !== nextProcess.id);
+    
+            await new Promise(resolve => setTimeout(resolve, 100)); 
         }
-
+    
         if (onComplete) {
             onComplete(queue.map(p => p.id)); 
         }
 
         setExecutionOrder(order);
         setExe(null);
-        setQueue([]);
+        setQueue([]);  
         setProgress(0);
         setAllCompleted(true);
     };
@@ -116,7 +134,7 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
                 },
                 title: {
                     display: true,
-                    text: 'Time (seconds)',
+                    text: 'Time (s)',
                 }
             },
         },

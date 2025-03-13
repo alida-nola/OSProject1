@@ -32,10 +32,11 @@ export default function FIFO({ processes, run, onComplete, chartRef }) {
 
     const exeProcess = async (process) => {
         return new Promise(resolve => {
-            setExe(process);
+            setExe(process); 
             setProgress(0);
             let progressValue = 0;
  
+            // Progress bar updates
             const interval = setInterval(() => {
                 progressValue += 10;
                 setProgress(progressValue);
@@ -58,12 +59,10 @@ export default function FIFO({ processes, run, onComplete, chartRef }) {
             setProgress(0);
     
             await exeProcess(process); 
-
-            currentTime += process.burstTime;
+            currentTime += process.burstTime; 
             const completedProcess = { ...process, completionTime: currentTime };
-    
-            setCompletedQueue(prevCompleted => [...prevCompleted, completedProcess]);
-            setQueue(prevQueue => prevQueue.slice(1)); 
+            setCompletedQueue(prevCompleted => [...prevCompleted, completedProcess]); // Newly completed process and its completion time
+            setQueue(prevQueue => prevQueue.slice(1)); // Removes process from queue
     
             setExe(null);
             setProgress(0);
@@ -113,7 +112,7 @@ export default function FIFO({ processes, run, onComplete, chartRef }) {
                 },
                 title: {
                     display: true,
-                    text: 'Time (seconds)',
+                    text: 'Time (s)',
                 }
             },
         },
@@ -175,6 +174,7 @@ export default function FIFO({ processes, run, onComplete, chartRef }) {
                 </Table>
             </div>
 
+            {/* Exports chart of completed algorithm */}
             {completedQueue.length > 0 && (
                 <div ref = {chartRef} style = {{ margin: "20px" }}>
                     <h5>Process Execution Chart</h5>

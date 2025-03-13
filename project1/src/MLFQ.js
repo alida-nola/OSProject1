@@ -125,7 +125,7 @@ export default function MLFQ({ processes, run, onComplete, chartRef }) {
                 },
                 title: {
                     display: true,
-                    text: 'Time (seconds)',
+                    text: 'Time (s)',
                 }
             },
         },

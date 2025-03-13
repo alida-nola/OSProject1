@@ -13,6 +13,7 @@ function App() {
     const [process, setProcess] = useState([]); // Stores list of randomly generated processes
     const [run, setRun] = useState(false); // Trigger to run algorithm(s)
 
+    // Export components
     const [completedProcesses, setCompletedProcesses] = useState(new Set()); 
     const [exportEnabled, setExportEnabled] = useState(false);
     const fifoChartRef = useRef(null);
@@ -30,8 +31,8 @@ function App() {
         }));
         
         setProcess(newProcess);
-        setRun(false);
         setCompletedProcesses(new Set());
+        setRun(false);
         setExportEnabled(false);
     };
 
@@ -39,7 +40,8 @@ function App() {
         setRun(true);
     };
 
-    const handleCompletion = (completedIds) => {
+    // Tracks completed processes
+    const handleCompletion = (completedIds) => { 
         setCompletedProcesses((prev) => {
             const updated = new Set([...prev, ...completedIds]);
             if (updated.size > 0) {
@@ -51,9 +53,9 @@ function App() {
     
     const handleExportChange = (e) => {
         const isChecked = e.target.checked;
-        setExportEnabled(isChecked);
+        setExportEnabled(isChecked); 
     
-        if (isChecked) {
+        if (isChecked) { 
             exportToPDF(completedProcesses, process, {
                 FIFO: fifoChartRef,
                 SJF: sjfChartRef,
@@ -63,6 +65,7 @@ function App() {
             });
         }
     };
+
     return (
         <>
             <div className = "container mt-5">
@@ -111,7 +114,6 @@ function App() {
                     <button className = "btn btn-primary ms-2 mb-3" onClick = {runAllAlgos} disabled = {selectedAlgo !== "All"}>
                         Run All Algorithms
                     </button>
-
                     
                     <div className = "form-check form-check-inline ms-3">
                         <input

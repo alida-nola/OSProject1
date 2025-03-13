@@ -13,11 +13,11 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default function SJF({ processes, run, onComplete, chartRef }) {
     const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
+    const [allCompleted, setAllCompleted] = useState(false); 
     const [exe, setExe] = useState(null);
-    const [progress, setProgress] = useState(0);
     const [executionOrder, setExecutionOrder] = useState([]);
-    const [allCompleted, setAllCompleted] = useState(false);
-
+    const [progress, setProgress] = useState(0);
+    
     useEffect(() => {
         setQueue(Array.isArray(processes) ? [...processes] : []);
         setCompletedQueue([]); 
@@ -116,7 +116,7 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
                 },
                 title: {
                     display: true,
-                    text: 'Time (seconds)',
+                    text: 'Time (s)',
                 }
             },
         },
@@ -166,7 +166,7 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {[...queue, ...completedQueue].map((process, index) => {
+                        {[...queue, ...completedQueue].map((process) => {
                             const isCompleted = completedQueue.some(p => p.id === process.id);
                             const exeStep = allCompleted ? executionOrder[completedQueue.findIndex(p => p.id === process.id)] : "Wait...";
 
