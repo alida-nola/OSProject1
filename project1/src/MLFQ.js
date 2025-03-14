@@ -82,11 +82,12 @@ export default function MLFQ({ processes, run, onComplete, chartRef }) {
         }
 
         if (onComplete) {
-            onComplete(queues.map(p => p.id)); 
+            onComplete(completedQueue.map(p => p.id)); 
         }
-    
+        
         setExe(null);
         setQueues([[], [], []]);
+        setCompletedQueue([]); 
         setProgress(0);
     };
     

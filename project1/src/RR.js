@@ -27,6 +27,8 @@ export default function RR({ processes, run, onComplete, chartRef }) {
         if (Array.isArray(processes) && processes.length > 0) {
             setQueue(processes.map((p) => ({ ...p, remainingTime: p.burstTime })));
             setCompletedQueue([]);
+            setExe(null);
+            setProgress(0);
         }
     }, [processes]);
 

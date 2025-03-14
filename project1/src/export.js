@@ -27,10 +27,10 @@ export const exportToPDF = async (completedProcesses, allProcesses, chartRefs, s
                 tableColumn = ["Process ID", "Burst Time (s)", "Completion Time (s)"];
             }
             else if (key === "SJF" || key === "STCF") {
-                tableColumn = ["Process ID", "Burst Time (s)", "Completion Time (s)", "Execution Step"];
+                tableColumn = ["Process ID", "Burst Time (s)", "Completion Time (s)"];
             } 
             else {
-                tableColumn = ["Process ID", "Burst Time (s)", "Completion Time (s)", "Priority Level", "Execution History" ];
+                tableColumn = ["Process ID", "Burst Time (s)", "Completion Time (s)"];
             }
 
             const tableRows = allProcesses
