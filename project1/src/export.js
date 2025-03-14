@@ -2,7 +2,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable"; 
 import html2canvas from "html2canvas";
 
-export const exportToPDF = async (completedProcesses, allProcesses, chartRefs) => {
+export const exportToPDF = async (completedProcesses, allProcesses, chartRefs, selectedAlgo) => {
     const doc = new jsPDF();
     doc.setFontSize(18);
     doc.text("CPU Scheduling Algorithm Results", 14, 20);
@@ -10,6 +10,7 @@ export const exportToPDF = async (completedProcesses, allProcesses, chartRefs) =
 
     let yOffset = 40; 
 
+    const algorithms = selectedAlgo === "All" ? Object.keys(chartRefs) : [selectedAlgo];
     for (const key in chartRefs) {
         if (chartRefs[key].current) {
             if (yOffset + 120 > doc.internal.pageSize.height) {
@@ -21,7 +22,17 @@ export const exportToPDF = async (completedProcesses, allProcesses, chartRefs) =
             doc.text(`${key}`, 14, yOffset); 
             yOffset += 5; 
 
-            const tableColumn = ["Process ID", "Arrival Time", "Burst Time"];
+            let tableColumn;
+            if (key === "FIFO" || key === "RR") {
+                tableColumn = ["Process ID", "Burst Time (s)", "Completion Time (s)"];
+            }
+            else if (key === "SJF" || key === "STCF") {
+                tableColumn = ["Process ID", "Burst Time (s)", "Completion Time (s)", "Execution Step"];
+            } 
+            else {
+                tableColumn = ["Process ID", "Burst Time (s)", "Completion Time (s)", "Priority Level", "Execution History" ];
+            }
+
             const tableRows = allProcesses
                 .filter(p => completedProcesses.has(p.id))
                 .map(p => [p.id, p.arrivalTime, p.burstTime]);

@@ -63,10 +63,10 @@ function App() {
                 STCF: stcfChartRef,
                 RR: rrChartRef,
                 MLFQ: mlfqChartRef,
-            });
+            }, selectedAlgo); 
         }
     };
-
+    
     return (
         <>
             <div className = "container mt-5">
