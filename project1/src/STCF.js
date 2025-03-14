@@ -31,7 +31,7 @@ export default function STCF({ processes, run, onComplete, chartRef }) {
         setAllCompleted(false);
     }, [processes]);
 
-    const exeProcess = async (process) => {
+    const exeProcess = async (process, delay = 500) => {  // Added delay parameter (in ms)
         return new Promise(resolve => {
             setExe(process); 
             setProgress(0);
@@ -43,12 +43,10 @@ export default function STCF({ processes, run, onComplete, chartRef }) {
     
                 // Check for preemption while executing
                 if (queue.length > 0) {
-                    // Finds the process with the shortest remaining burst time
                     const shortestJob = queue.reduce((prev, current) => 
                         (prev.remainingBurstTime < current.remainingBurstTime ? prev : current)
                     );
     
-                    // Allows interuption of a current process
                     if (shortestJob.remainingBurstTime < process.remainingBurstTime) {
                         clearInterval(interval);
                         resolve();
@@ -60,40 +58,41 @@ export default function STCF({ processes, run, onComplete, chartRef }) {
                     clearInterval(interval);
                     resolve();
                 }
-            }, (process.remainingBurstTime / 10) * 100); 
+            }, delay);  
         });
     };
     
     const exeSTCF = async () => {
         if (queue.length === 0) return;
     
-        let remainingQueue = [...queue];  
+        let remainingQueue = [...queue];
         let completionTime = 0;
         const order = [];
     
         while (remainingQueue.length > 0) {
-            remainingQueue.sort((a, b) => a.remainingBurstTime - b.remainingBurstTime); // Shorts queue by shortest remaining time 
-            const nextProcess = remainingQueue[0]; 
+            remainingQueue.sort((a, b) => a.remainingBurstTime - b.remainingBurstTime); // Sorts queue by shortest remaining time
+            const nextProcess = remainingQueue[0];
     
-            await exeProcess(nextProcess);
+            await exeProcess(nextProcess, 1000); // Added delay of 1000ms (1 second) per process execution
             completionTime += nextProcess.burstTime;
-            order.push(`Step ${order.length + 1}`); // Orders completed processes
+            order.push(`Step ${order.length + 1}`);
+    
             setCompletedQueue(prev => [...prev, { ...nextProcess, completionTime }]);
             remainingQueue = remainingQueue.filter(p => p.id !== nextProcess.id);
     
-            await new Promise(resolve => setTimeout(resolve, 100)); 
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay between each process execution
         }
     
         if (onComplete) {
-            onComplete(queue.map(p => p.id)); 
+            onComplete(queue.map(p => p.id));
         }
-
+    
         setExecutionOrder(order);
         setExe(null);
-        setQueue([]);  
+        setQueue([]);
         setProgress(0);
         setAllCompleted(true);
-    };
+    };    
 
     const getRowClass = (process) => {
         return completedQueue.some(p => p.id === process.id) ? "table-success" : "";
@@ -185,19 +184,22 @@ export default function STCF({ processes, run, onComplete, chartRef }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {[...queue, ...completedQueue].map((process, index) => {
-                            const isCompleted = completedQueue.some(p => p.id === process.id);
-                            const exeStep = allCompleted ? executionOrder[completedQueue.findIndex(p => p.id === process.id)] : "Wait...";
-
-                            return (
-                                <tr key = {process.id} className = {getRowClass(process)}>
-                                    <td>P{process.id}</td>
-                                    <td>{process.burstTime}</td>
-                                    <td>{isCompleted ? process.completionTime : '-'}</td>
-                                    <td>{isCompleted ? exeStep : `-`}</td>
-                                </tr>
-                            );
-                        })}
+                    {queue.filter(process => !completedQueue.some(p => p.id === process.id)).map((process) => (
+                        <tr key={process.id} className={getRowClass(process)}>
+                            <td>P{process.id}</td>
+                            <td>{process.burstTime}</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                    ))}
+                    {completedQueue.map((process) => (
+                        <tr key={process.id} className={getRowClass(process)}>
+                            <td>P{process.id}</td>
+                            <td>{process.burstTime}</td>
+                            <td>{process.completionTime}</td>
+                            <td>{executionOrder[completedQueue.findIndex(p => p.id === process.id)] || "Waiting..."}</td> {/* Show "Waiting..." if no execution step is found */}
+                        </tr>
+                    ))}
                     </tbody>
                 </Table>
             </div>
