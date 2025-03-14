@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { exportToPDF } from "./export"; 
+import './App.css';
 import FIFO from './FIFO';
 import SJF from './SJF';
 import STCF from './STCF';

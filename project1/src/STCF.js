@@ -10,7 +10,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function SJF({ processes, run, onComplete, chartRef }) {
+export default function STCF({ processes, run, onComplete, chartRef }) {
     const [queue, setQueue] = useState(Array.isArray(processes) ? processes : []);
     const [completedQueue, setCompletedQueue] = useState([]);
     const [allCompleted, setAllCompleted] = useState(false);
@@ -20,7 +20,7 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
 
     useEffect(() => {
         if (run) {
-            exeSJF(); 
+            exeSTCF(); 
         }
     }, [run]); 
 
@@ -64,7 +64,7 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
         });
     };
     
-    const exeSJF = async () => {
+    const exeSTCF = async () => {
         if (queue.length === 0) return;
     
         let remainingQueue = [...queue];  
@@ -168,8 +168,8 @@ export default function SJF({ processes, run, onComplete, chartRef }) {
                 />
             </div>
 
-            <Button onClick={exeSJF} disabled={exe || queue.length === 0 }>
-                {"SJF Start"}
+            <Button onClick={exeSTCF} disabled={exe || queue.length === 0 }>
+                {"STCF Start"}
             </Button>
 
             <div style={{ marginTop: "20px" }}>

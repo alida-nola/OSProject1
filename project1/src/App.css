@@ -37,7 +37,26 @@
   }
 }
 
-/* body {
-  background-color: #C2CAD6;
+body {
   font-family: 'Roboto', sans-serif;
-} */
+  background-color: #F5E0ED !important;
+}
+
+button {
+  background-color: #2E4476 !important;
+  border: none !important;
+}
+
+button:hover {
+  background-color: #5D7BC0 !important;
+  border: none !important;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #2E4476;
+}
+
+table thead tr th{
+  background-color: #2E4476 !important;
+  color: white !important;
+}
