@@ -150,6 +150,7 @@ export default function STCF({ processes, run, onComplete, chartRef }) {
                         <img 
                             src={catGif}
                             style={{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} 
+                            alt = "Typing cat"
                         />
                     </div>
                 )}

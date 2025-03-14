@@ -137,7 +137,7 @@ export default function MLFQ({ processes, run, onComplete, chartRef }) {
             <div style = {{ margin: "20px" }}>
                 {exe && (
                     <div style = {{ marginBottom: "20px" }}>
-                        <img src = {catGif} style = {{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} />
+                        <img src = {catGif} style = {{ width: "200px", height: "auto", display: "block", margin: "0 auto" }} alt = "Typing cat"/>
                     </div>
                 )}
                 <h5>{exe ? `Executing: P${exe.id} (Remaining Time: ${exe.remaining}s)` : "Waiting..."}</h5>

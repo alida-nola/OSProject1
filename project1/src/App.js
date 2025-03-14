@@ -47,6 +47,7 @@ function App() {
             const updated = new Set([...prev, ...completedIds]);
             if (updated.size > 0) {
                 setExportEnabled(false); 
+                setRun(false);
             }
             return updated;
         });
@@ -108,7 +109,7 @@ function App() {
                 )}
 
                 <div style = {{paddingTop: "10px"}}>
-                    <button className = "btn btn-primary mb-3" onClick = {generateProcess}>
+                    <button className = "btn btn-primary mb-3" onClick = {generateProcess} disabled = {run}>
                         Generate Random Processes
                     </button>
 
