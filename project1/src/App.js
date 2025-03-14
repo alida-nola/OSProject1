@@ -113,7 +113,7 @@ function App() {
                         Generate Random Processes
                     </button>
 
-                    <button className = "btn btn-primary ms-2 mb-3" onClick = {runAllAlgos} disabled = {selectedAlgo !== "All"}>
+                    <button className = "btn btn-primary ms-2 mb-3" onClick = {runAllAlgos} disabled = {selectedAlgo !== "All" || run}>
                         Run All Algorithms
                     </button>
                     

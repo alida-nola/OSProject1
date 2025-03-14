@@ -73,14 +73,14 @@ export default function STCF({ processes, run, onComplete, chartRef }) {
             remainingQueue.sort((a, b) => a.remainingBurstTime - b.remainingBurstTime); // Sorts queue by shortest remaining time
             const nextProcess = remainingQueue[0];
     
-            await exeProcess(nextProcess, 1000); // Added delay of 1000ms (1 second) per process execution
+            await exeProcess(nextProcess, 450); 
             completionTime += nextProcess.burstTime;
             order.push(`Step ${order.length + 1}`);
     
             setCompletedQueue(prev => [...prev, { ...nextProcess, completionTime }]);
             remainingQueue = remainingQueue.filter(p => p.id !== nextProcess.id);
     
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay between each process execution
+            await new Promise(resolve => setTimeout(resolve, 100)); // Delay between each process execution
         }
     
         if (onComplete) {
@@ -197,7 +197,7 @@ export default function STCF({ processes, run, onComplete, chartRef }) {
                             <td>P{process.id}</td>
                             <td>{process.burstTime}</td>
                             <td>{process.completionTime}</td>
-                            <td>{executionOrder[completedQueue.findIndex(p => p.id === process.id)] || "Waiting..."}</td> {/* Show "Waiting..." if no execution step is found */}
+                            <td>{executionOrder[completedQueue.findIndex(p => p.id === process.id)] || "Wait..."}</td> 
                         </tr>
                     ))}
                     </tbody>
